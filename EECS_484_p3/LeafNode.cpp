@@ -89,7 +89,11 @@ TreeNode* LeafNode::deleteFromRoot(const DataEntry& entryToRemove) {
 void LeafNode::insertEntry(const DataEntry& newEntry) {
     // TO DO: implement this function
     if(entries.size() == 2*kLeafOrder){
-        
+        if(this->getParent() == nullptr){
+            this->insertIntoRoot(newEntry);
+        }
+        TreeNode *newChild;
+        (this->getParent())->insertChild(newChild,newEntry);
     }
     else{
         entries.push_back(newEntry);

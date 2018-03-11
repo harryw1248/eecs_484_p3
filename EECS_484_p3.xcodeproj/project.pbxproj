@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		08C3F7C1205089BF00A233DC /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 08C3F7C0205089BF00A233DC /* main.c */; };
 		08C3F7D5205089F600A233DC /* BTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08C3F7C7205089F600A233DC /* BTree.cpp */; };
 		08C3F7D6205089F600A233DC /* DataEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08C3F7C9205089F600A233DC /* DataEntry.cpp */; };
 		08C3F7D7205089F600A233DC /* InnerNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08C3F7CB205089F600A233DC /* InnerNode.cpp */; };
@@ -32,7 +31,6 @@
 
 /* Begin PBXFileReference section */
 		08C3F7BD205089BF00A233DC /* EECS_484_p3 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = EECS_484_p3; sourceTree = BUILT_PRODUCTS_DIR; };
-		08C3F7C0205089BF00A233DC /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		08C3F7C7205089F600A233DC /* BTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BTree.cpp; sourceTree = "<group>"; };
 		08C3F7C8205089F600A233DC /* BTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BTree.h; sourceTree = "<group>"; };
 		08C3F7C9205089F600A233DC /* DataEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataEntry.cpp; sourceTree = "<group>"; };
@@ -79,7 +77,6 @@
 		08C3F7BF205089BF00A233DC /* EECS_484_p3 */ = {
 			isa = PBXGroup;
 			children = (
-				08C3F7C0205089BF00A233DC /* main.c */,
 				08C3F7C7205089F600A233DC /* BTree.cpp */,
 				08C3F7C8205089F600A233DC /* BTree.h */,
 				08C3F7C9205089F600A233DC /* DataEntry.cpp */,
@@ -163,7 +160,6 @@
 				08C3F7D7205089F600A233DC /* InnerNode.cpp in Sources */,
 				08C3F7D6205089F600A233DC /* DataEntry.cpp in Sources */,
 				08C3F7D5205089F600A233DC /* BTree.cpp in Sources */,
-				08C3F7C1205089BF00A233DC /* main.c in Sources */,
 				08C3F7DC205089F600A233DC /* Utilities.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -293,6 +289,7 @@
 				08C3F7C6205089BF00A233DC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
