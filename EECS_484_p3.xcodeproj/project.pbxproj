@@ -257,6 +257,7 @@
 		08C3F7C5205089BF00A233DC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
 				DEVELOPMENT_TEAM = XQQBB3775D;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -265,6 +266,7 @@
 		08C3F7C6205089BF00A233DC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
 				DEVELOPMENT_TEAM = XQQBB3775D;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
