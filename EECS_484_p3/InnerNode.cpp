@@ -113,6 +113,8 @@ TreeNode* InnerNode::deleteFromRoot(const DataEntry& entryToRemove) {
 
 void InnerNode::insertEntry(const DataEntry& newEntry) {
     // TO DO: implement this function
+    
+    //recursively call this?
 }
 
 void InnerNode::deleteEntry(const DataEntry& entryToRemove) {
@@ -121,6 +123,10 @@ void InnerNode::deleteEntry(const DataEntry& entryToRemove) {
 
 void InnerNode::insertChild(TreeNode* newChild, const Key& key) {
     // TO DO: implement this function
+    
+    //what do we do with key?
+    newChild->updateParent(this);
+    this->children.push_back(newChild);
 }
 
 void InnerNode::deleteChild(TreeNode* childToRemove) {

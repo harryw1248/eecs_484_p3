@@ -21,6 +21,12 @@ using std::string;
 LeafNode::LeafNode(InnerNode* parent)
     : TreeNode{ parent }, entries{} {}
 
+void LeafNode::setEntries(LeafNode *ln,vector<DataEntry>entriesIn){
+    for(int i = 0; i < entriesIn.size(); ++i){
+        ln->entries.push_back(entriesIn[i]);
+    }
+}
+
 // print keys of data entries surrounded by curly braces, ending
 // newline
 void LeafNode::print(ostream& os, int indent) const {
@@ -90,23 +96,32 @@ void LeafNode::insertEntry(const DataEntry& newEntry) {
     // TO DO: implement this function
     
     //check if entry is already in the tree
-    for(auto i:entries){
-        if(i == newEntry){
-            return;
-        }
+    if(this->contains(newEntry)){
+        return;
     }
     
     //case where leaf node is full
-    if(entries.size() == 2*kLeafOrder-1){
-        if(this->getParent() == nullptr){
-            this->insertIntoRoot(newEntry);
-        }
+    if(entries.size() == 2*kLeafOrder){
+
         TreeNode *newChild;
-        this->getParent()->insertChild(newChild,newEntry);
+        this->getParent()->insertChild(newChild,entries[kLeafOrder]);
+    
+        
+        vector<DataEntry>rightHalf_vector;
+        for(unsigned long i = entries.size()/2; i < entries.size(); ++i){
+            rightHalf_vector.push_back(entries[i]);
+        }
+        LeafNode *newLeaf = nullptr;
+        setEntries(newLeaf,rightHalf_vector);
+        
+        
+        this->getParent()->insertChild(newLeaf,newLeaf->entries[0]);
     }
+    
     //case where leaf node is not full
     else{
-        entries.push_back(newEntry);
+        auto lower_bound = std::lower_bound(entries.begin(),entries.end(),newEntry);
+        entries.insert(lower_bound,newEntry);
     }
     
     
