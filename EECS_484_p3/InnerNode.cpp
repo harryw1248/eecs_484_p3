@@ -125,8 +125,12 @@ void InnerNode::insertChild(TreeNode* newChild, const Key& key) {
     // TO DO: implement this function
     
     //update key in inner node (look at lecture slides)
+    auto lower_bound = std::lower_bound(keys.begin(),keys.end(),key);
+    keys.insert(lower_bound,key);
+    
+    auto i = children.begin() + (lower_bound - keys.begin());
     newChild->updateParent(this);
-    this->children.push_back(newChild);
+    children.insert(i,newChild);
 }
 
 void InnerNode::deleteChild(TreeNode* childToRemove) {

@@ -21,11 +21,11 @@ using std::string;
 LeafNode::LeafNode(InnerNode* parent)
     : TreeNode{ parent }, entries{} {}
 
-//void LeafNode::setEntries(LeafNode *ln,vector<DataEntry>entriesIn){
-//    for(int i = 0; i < entriesIn.size(); ++i){
-//        ln->entries.push_back(entriesIn[i]);
-//    }
-//}
+void LeafNode::setEntries(LeafNode *ln,vector<DataEntry>entriesIn){
+    for(int i = 0; i < entriesIn.size(); ++i){
+        ln->entries.push_back(entriesIn[i]);
+    }
+}
 
 // print keys of data entries surrounded by curly braces, ending
 // newline
@@ -103,19 +103,30 @@ void LeafNode::insertEntry(const DataEntry& newEntry) {
     //case where leaf node is full
     if(entries.size() == 2*kLeafOrder){
 
-        TreeNode *newChild;
-        this->getParent()->insertChild(newChild,entries[kLeafOrder]);
-    
-        
         vector<DataEntry>rightHalf_vector;
-        for(unsigned long i = entries.size()/2; i < entries.size(); ++i){
+        //create second half
+        for(unsigned long i = kLeafOrder; i < entries.size(); ++i){
             rightHalf_vector.push_back(entries[i]);
         }
+        //split first half
+        for(unsigned long i = entries.size()-1; i >= kLeafOrder; ++i){
+            this->entries.pop_back();
+        }
+        
+        if(newEntry > rightHalf_vector[rightHalf_vector.size()-1]){
+            rightHalf_vector.push_back(newEntry);
+        }
+        else{
+            this->entries.push_back(newEntry);
+        }
+        
         LeafNode *newLeaf = nullptr;
         setEntries(newLeaf,rightHalf_vector);
         
         
         this->getParent()->insertChild(newLeaf,newLeaf->entries[0]);
+        this->rightNeighbor = newLeaf;
+        newLeaf->leftNeighbor = this;
     }
     
     //case where leaf node is not full
