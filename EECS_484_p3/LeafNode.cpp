@@ -21,11 +21,11 @@ using std::string;
 LeafNode::LeafNode(InnerNode* parent)
     : TreeNode{ parent }, entries{} {}
 
-void LeafNode::setEntries(LeafNode *ln,vector<DataEntry>entriesIn){
-    for(int i = 0; i < entriesIn.size(); ++i){
-        ln->entries.push_back(entriesIn[i]);
-    }
-}
+//void LeafNode::setEntries(LeafNode *ln,vector<DataEntry>entriesIn){
+//    for(int i = 0; i < entriesIn.size(); ++i){
+//        ln->entries.push_back(entriesIn[i]);
+//    }
+//}
 
 // print keys of data entries surrounded by curly braces, ending
 // newline

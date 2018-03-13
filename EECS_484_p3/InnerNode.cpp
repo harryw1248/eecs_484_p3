@@ -114,7 +114,7 @@ TreeNode* InnerNode::deleteFromRoot(const DataEntry& entryToRemove) {
 void InnerNode::insertEntry(const DataEntry& newEntry) {
     // TO DO: implement this function
     
-    //recursively call this?
+    //keep tracing down using inner node keys
 }
 
 void InnerNode::deleteEntry(const DataEntry& entryToRemove) {
@@ -124,7 +124,7 @@ void InnerNode::deleteEntry(const DataEntry& entryToRemove) {
 void InnerNode::insertChild(TreeNode* newChild, const Key& key) {
     // TO DO: implement this function
     
-    //what do we do with key?
+    //update key in inner node (look at lecture slides)
     newChild->updateParent(this);
     this->children.push_back(newChild);
 }
