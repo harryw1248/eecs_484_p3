@@ -115,6 +115,17 @@ void InnerNode::insertEntry(const DataEntry& newEntry) {
     // TO DO: implement this function
     
     //keep tracing down using inner node keys
+    assert(!contains(newEntry));
+    for(int i = 0; i < keys.size(); ++i){
+        if(newEntry < keys[i]){
+            this->children[i]->insertEntry(newEntry);
+            assert((keys.size() <= 2*kInnerOrder && (!getParent() || (keys.size() >= kInnerOrder))) || !getParent());
+            return;
+        }
+    }
+    
+    children.back()->insertEntry(newEntry);
+    assert((keys.size() <= 2*kInnerOrder && (!getParent() || (keys.size() >= kInnerOrder))) || !getParent());
 }
 
 void InnerNode::deleteEntry(const DataEntry& entryToRemove) {
@@ -123,6 +134,8 @@ void InnerNode::deleteEntry(const DataEntry& entryToRemove) {
 
 void InnerNode::insertChild(TreeNode* newChild, const Key& key) {
     // TO DO: implement this function
+    
+    assert(newChild != nullptr);
     
     //update key in inner node (look at lecture slides)
     auto lower_bound = std::lower_bound(keys.begin(),keys.end(),key);

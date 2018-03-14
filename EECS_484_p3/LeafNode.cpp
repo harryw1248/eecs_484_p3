@@ -123,10 +123,16 @@ void LeafNode::insertEntry(const DataEntry& newEntry) {
         LeafNode *newLeaf = nullptr;
         setEntries(newLeaf,rightHalf_vector);
         
-        
-        this->getParent()->insertChild(newLeaf,newLeaf->entries[0]);
+        if(this->rightNeighbor != nullptr){
+            this->rightNeighbor->leftNeighbor = newLeaf;
+        }
+        newLeaf->rightNeighbor = this->rightNeighbor;
         this->rightNeighbor = newLeaf;
         newLeaf->leftNeighbor = this;
+        
+        this->getParent()->insertChild(newLeaf,newLeaf->rightNeighbor->entries[0]);
+
+        
     }
     
     //case where leaf node is not full
