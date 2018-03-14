@@ -96,9 +96,7 @@ void LeafNode::insertEntry(const DataEntry& newEntry) {
     // TO DO: implement this function
     
     //check if entry is already in the tree
-    if(this->contains(newEntry)){
-        return;
-    }
+    assert(!this->contains(Key(newEntry)));
     
     //case where leaf node is full
     if(entries.size() == 2*kLeafOrder){

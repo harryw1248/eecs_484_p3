@@ -120,6 +120,8 @@ class InnerNode final : public TreeNode {
         // EFFECTS:  changes the key in <this> InnerNode whose right subtree would
         //   contain <rightDescendant> to be the value of <newKey>
         void updateKey(const TreeNode* rightDescendant, const Key& newKey);
+    
+        void setVectors(InnerNode* innerNodeIn, std::vector<TreeNode*>childrenIn, std::vector<Key>keysIn);
 
     private:
         std::vector<Key> keys;
