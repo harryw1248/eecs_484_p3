@@ -151,8 +151,6 @@ void InnerNode::insertChild(TreeNode* newChild, const Key& key) {
             children.pop_back();
         }
         
-        //how do you sort  the newChild vector
-        
         //how would you construct this
         InnerNode *createNode = new InnerNode();
         
