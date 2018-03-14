@@ -113,7 +113,7 @@ void LeafNode::insertEntry(const DataEntry& newEntry) {
             this->entries.pop_back();
         }
         
-        if(newEntry > rightHalf_vector[rightHalf_vector.size()-1]){
+        if(newEntry > rightHalf_vector[0]){
             rightHalf_vector.push_back(newEntry);
         }
         else{
