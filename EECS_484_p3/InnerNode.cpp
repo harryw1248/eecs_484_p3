@@ -153,10 +153,11 @@ void InnerNode::insertChild(TreeNode* newChild, const Key& key) {
     assert((newChild != nullptr) && newChild->minKey() >= key);
     
     //update key in inner node (look at lecture slides)
-    auto upper_bound = std::upper_bound(keys.begin(),keys.end(),key);
-    keys.insert(upper_bound,key);
+    auto lower_bound = std::lower_bound(keys.begin(),keys.end(),key);
+    keys.insert(lower_bound,key);
     
-    auto i = children.begin() + (upper_bound - keys.begin()) + 1;
+    //int distance = lower_bound - keys.begin();
+    auto i = children.begin() + (lower_bound - keys.begin()) + 1;
     newChild->updateParent(this);
     children.insert(i,newChild);
     
