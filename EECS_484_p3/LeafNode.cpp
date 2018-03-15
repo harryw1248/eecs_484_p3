@@ -97,6 +97,9 @@ void LeafNode::insertEntry(const DataEntry& newEntry) {
     
     //check if entry is already in the tree
     assert(!this->contains(Key(newEntry)));
+    if(entries.empty()){
+        entries.push_back(newEntry);
+    }
     
     //case where leaf node is full
     if(entries.size() >= 2*kLeafOrder){
@@ -148,7 +151,6 @@ void LeafNode::insertEntry(const DataEntry& newEntry) {
         auto upper_bound = std::upper_bound(entries.begin(),entries.end(),newEntry);
         entries.insert(upper_bound,newEntry);
     }
-    
     
 }
 
