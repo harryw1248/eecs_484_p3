@@ -101,6 +101,15 @@ void LeafNode::insertEntry(const DataEntry& newEntry) {
     //case where leaf node is full
     if(entries.size() >= 2*kLeafOrder){
 
+        LeafNode *newLeaf = new LeafNode(this->getParent());
+        newLeaf->rightNeighbor = this->rightNeighbor;
+        this->rightNeighbor = newLeaf;
+        newLeaf->leftNeighbor = this;
+        
+        if(this->rightNeighbor != nullptr){
+            this->rightNeighbor->leftNeighbor = newLeaf;
+        }
+        
         vector<DataEntry>rightHalf_vector;
         //create second half
         for(unsigned long i = kLeafOrder; i < entries.size(); ++i){
@@ -112,7 +121,7 @@ void LeafNode::insertEntry(const DataEntry& newEntry) {
         }
         
         //put DataEntry into correct spot
-        if(newEntry > rightHalf_vector[0]){
+        if(newEntry >= rightHalf_vector[0]){
             auto upper_bound = std::upper_bound(rightHalf_vector.begin(),rightHalf_vector.end(),newEntry);
             rightHalf_vector.insert(upper_bound,newEntry);
         }
@@ -121,7 +130,6 @@ void LeafNode::insertEntry(const DataEntry& newEntry) {
             entries.insert(upper_bound,newEntry);
         }
         
-        LeafNode *newLeaf = new LeafNode();
         setEntries(newLeaf,rightHalf_vector);
         
         if(this->getParent()){
@@ -133,14 +141,6 @@ void LeafNode::insertEntry(const DataEntry& newEntry) {
             newLeaf->updateParent(newParent);
             
         }
-        
-        if(this->rightNeighbor != nullptr){
-            this->rightNeighbor->leftNeighbor = newLeaf;
-        }
-        
-        newLeaf->rightNeighbor = this->rightNeighbor;
-        this->rightNeighbor = newLeaf;
-        newLeaf->leftNeighbor = this;
     }
     
     //case where leaf node is not full
