@@ -99,7 +99,7 @@ void LeafNode::insertEntry(const DataEntry& newEntry) {
     assert(!this->contains(Key(newEntry)));
     
     //case where leaf node is full
-    if(entries.size() == 2*kLeafOrder){
+    if(entries.size() >= 2*kLeafOrder){
 
         vector<DataEntry>rightHalf_vector;
         //create second half
@@ -107,36 +107,46 @@ void LeafNode::insertEntry(const DataEntry& newEntry) {
             rightHalf_vector.push_back(entries[i]);
         }
         //split first half
-        for(unsigned long i = entries.size()-1; i >= kLeafOrder; ++i){
+        for(unsigned long i = kLeafOrder; i < entries.size(); ++i){
             this->entries.pop_back();
         }
         
+        //put DataEntry into correct spot
         if(newEntry > rightHalf_vector[0]){
-            rightHalf_vector.push_back(newEntry);
+            auto upper_bound = std::upper_bound(rightHalf_vector.begin(),rightHalf_vector.end(),newEntry);
+            rightHalf_vector.insert(upper_bound,newEntry);
         }
         else{
-            this->entries.push_back(newEntry);
+            auto upper_bound = std::upper_bound(entries.begin(),entries.end(),newEntry);
+            entries.insert(upper_bound,newEntry);
         }
         
-        LeafNode *newLeaf = nullptr;
+        LeafNode *newLeaf = new LeafNode();
         setEntries(newLeaf,rightHalf_vector);
+        
+        if(this->getParent()){
+            this->getParent()->insertChild(newLeaf,(Key)newLeaf->entries[0]);
+        }
+        else{
+            InnerNode *newParent = new InnerNode(this,newLeaf->entries[0],newLeaf);
+            this->updateParent(newParent);
+            newLeaf->updateParent(newParent);
+            
+        }
         
         if(this->rightNeighbor != nullptr){
             this->rightNeighbor->leftNeighbor = newLeaf;
         }
+        
         newLeaf->rightNeighbor = this->rightNeighbor;
         this->rightNeighbor = newLeaf;
         newLeaf->leftNeighbor = this;
-        
-        this->getParent()->insertChild(newLeaf,newLeaf->rightNeighbor->entries[0]);
-
-        
     }
     
     //case where leaf node is not full
     else{
-        auto lower_bound = std::lower_bound(entries.begin(),entries.end(),newEntry);
-        entries.insert(lower_bound,newEntry);
+        auto upper_bound = std::upper_bound(entries.begin(),entries.end(),newEntry);
+        entries.insert(upper_bound,newEntry);
     }
     
     
