@@ -190,7 +190,7 @@ void InnerNode::insertChild(TreeNode* newChild, const Key& key) {
         
         
         //how would you construct this
-        InnerNode *newInnerNode = new InnerNode(newChildren[0],newParentValue,newChild,this->getParent());
+        InnerNode *newInnerNode = new InnerNode(newChildren[0],newKeys[0],newChildren[1],this->getParent());
         setVectors(newInnerNode,newChildren,newKeys);
         
         if (!getParent()) {
