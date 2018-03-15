@@ -26,7 +26,7 @@ InnerNode::InnerNode(TreeNode* child1, const Key& key, TreeNode* child2, InnerNo
 
 //InnerNode::InnerNode(vector<TreeNode*> childs, vector<Key> keyer, InnerNode *parent)
 //: TreeNode{parent}, keys {keyer}, children {childs} {
-//    
+//
 //    for(auto &kid : childs){
 //        assert(kid != nullptr);
 //        kid -> updateParent(this);
@@ -34,10 +34,10 @@ InnerNode::InnerNode(TreeNode* child1, const Key& key, TreeNode* child2, InnerNo
 //}
 
 void InnerNode::setVectors(InnerNode* innerNodeIn, vector<TreeNode*>childrenIn, vector<Key>keysIn){
-    for(int i = 0; i < childrenIn.size(); ++i){
+    for(unsigned i = 0; i < childrenIn.size(); ++i){
         this->children.push_back(childrenIn[i]);
     }
-    for(int i = 0; i < keysIn.size(); ++i){
+    for(unsigned i = 0; i < keysIn.size(); ++i){
         this->keys.push_back(keysIn[i]);
     }
 }
@@ -133,7 +133,7 @@ void InnerNode::insertEntry(const DataEntry& newEntry) {
     // TO DO: implement this function
     //keep tracing down using inner node keys
     assert(!contains(newEntry));
-    for(int i = 0; i < keys.size(); ++i){
+    for(unsigned i = 0; i < keys.size(); ++i){
         if(newEntry < keys[i]){
             this->children[i]->insertEntry(newEntry);
             assert((keys.size() <= 2*kInnerOrder && (!getParent() || (keys.size() >= kInnerOrder))) || !getParent());
@@ -156,13 +156,13 @@ void InnerNode::insertChild(TreeNode* newChild, const Key& key) {
     auto lower_bound = std::lower_bound(keys.begin(),keys.end(),key);
     keys.insert(lower_bound,key);
     
-    //int distance = lower_bound - keys.begin();
+    lower_bound = std::lower_bound(keys.begin(),keys.end(),key);
     auto i = children.begin() + (lower_bound - keys.begin()) + 1;
     newChild->updateParent(this);
     children.insert(i,newChild);
     
     //check if we need to split inner node
-    if(keys.size() > 2*kInnerOrder+1){
+    if(children.size() > 2*kInnerOrder+1){
         
         unsigned long middle = (children.size()-1)/2;
         Key newParentValue = this->keys[middle];
@@ -203,7 +203,7 @@ void InnerNode::insertChild(TreeNode* newChild, const Key& key) {
             getParent()->insertChild(newInnerNode,newParentValue);
         }
     }
-
+    
 }
 
 void InnerNode::deleteChild(TreeNode* childToRemove) {

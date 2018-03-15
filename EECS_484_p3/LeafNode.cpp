@@ -19,10 +19,10 @@ using std::string;
 
 // constructor
 LeafNode::LeafNode(InnerNode* parent)
-    : TreeNode{ parent }, entries{} {}
+: TreeNode{ parent }, entries{} {}
 
 void LeafNode::setEntries(LeafNode *ln,vector<DataEntry>entriesIn){
-    for(int i = 0; i < entriesIn.size(); ++i){
+    for(unsigned i = 0; i < entriesIn.size(); ++i){
         ln->entries.push_back(entriesIn[i]);
     }
 }
@@ -31,7 +31,7 @@ void LeafNode::setEntries(LeafNode *ln,vector<DataEntry>entriesIn){
 // newline
 void LeafNode::print(ostream& os, int indent) const {
     assert(indent >= 0);
-
+    
     os << kPrintPrefix << string(indent, ' ') << "{ ";
     for (const auto& entry : entries) {
         if (entry != entries[0]) {
@@ -40,7 +40,7 @@ void LeafNode::print(ostream& os, int indent) const {
         os << entry;
     }
     os << " }\n";
-
+    
     assert(satisfiesInvariant());
 }
 
@@ -73,7 +73,7 @@ bool LeafNode::contains(const TreeNode* node) const {
 // return the data entry with given key
 const DataEntry& LeafNode::operator[](const Key& key) const {
     assert(contains(key));
-
+    
     return *find(entries.cbegin(), entries.cend(), key);
 }
 
@@ -86,7 +86,7 @@ vector<DataEntry> LeafNode::rangeFind(const Key& begin, const Key& end) const {
 TreeNode* LeafNode::deleteFromRoot(const DataEntry& entryToRemove) {
     assert(contains(entryToRemove));
     assert(!getParent());
-
+    
     deleteEntry(entryToRemove);
     assert(satisfiesInvariant());
     return this;
@@ -100,7 +100,7 @@ void LeafNode::insertEntry(const DataEntry& newEntry) {
     
     //case where leaf node is full
     if(entries.size() >= 2*kLeafOrder){
-
+        
         LeafNode *newLeaf = new LeafNode(this->getParent());
         newLeaf->rightNeighbor = this->rightNeighbor;
         this->rightNeighbor = newLeaf;
