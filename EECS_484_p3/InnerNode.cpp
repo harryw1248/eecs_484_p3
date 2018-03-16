@@ -201,5 +201,17 @@ void InnerNode::insertChild(TreeNode* newChild, const Key& key) {
 }
 
 void InnerNode::deleteChild(TreeNode* childToRemove) {
+    
     // TO DO: implement this function
+    
+    //case where tree height decreases
+    if(this->keys.size() == 1){
+        
+    }
+    else{
+        auto i = std::find(this->children.begin(),this->children.end(),childToRemove);
+        unsigned long distance = this->children.begin() - i;
+        this->children.erase(i);
+        this->keys.erase(this->keys.begin() + (distance-1));
+    }
 }
