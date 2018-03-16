@@ -116,7 +116,7 @@ void LeafNode::insertEntry(const DataEntry& newEntry) {
             rightHalf_vector.push_back(entries[i]);
         }
         //split first half
-        for(unsigned long i = kLeafOrder; i < entries.size(); ++i){
+        for(unsigned long i = kLeafOrder; i < 2*kLeafOrder; ++i){
             this->entries.pop_back();
         }
         

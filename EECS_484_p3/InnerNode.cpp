@@ -24,6 +24,14 @@ InnerNode::InnerNode(TreeNode* child1, const Key& key, TreeNode* child2, InnerNo
     child2->updateParent(this);
 }
 
+class sortInvariant {
+public:
+    bool operator()(const TreeNode* rhs, const TreeNode* lhs) {
+        
+        return rhs->minKey() < lhs->minKey();
+    }
+};
+
 //InnerNode::InnerNode(vector<TreeNode*> childs, vector<Key> keyer, InnerNode *parent)
 //: TreeNode{parent}, keys {keyer}, children {childs} {
 //
@@ -33,11 +41,11 @@ InnerNode::InnerNode(TreeNode* child1, const Key& key, TreeNode* child2, InnerNo
 //    }
 //}
 
-void InnerNode::setVectors(InnerNode* innerNodeIn, vector<TreeNode*>childrenIn, vector<Key>keysIn){
-    for(unsigned i = 0; i < childrenIn.size(); ++i){
+void InnerNode::setVectors(InnerNode* innerNodeIn, vector<TreeNode*>childrenIn, vector<Key>keysIn) {
+    for (unsigned i = 0; i < childrenIn.size(); ++i) {
         this->children.push_back(childrenIn[i]);
     }
-    for(unsigned i = 0; i < keysIn.size(); ++i){
+    for (unsigned i = 0; i < keysIn.size(); ++i) {
         this->keys.push_back(keysIn[i]);
     }
 }
@@ -133,15 +141,15 @@ void InnerNode::insertEntry(const DataEntry& newEntry) {
     // TO DO: implement this function
     //keep tracing down using inner node keys
     assert(!contains(newEntry));
-    for(unsigned i = 0; i < keys.size(); ++i){
-        if(newEntry < keys[i]){
+    for (unsigned i = 0; i < keys.size(); ++i) {
+        if (newEntry < keys[i]) {
             this->children[i]->insertEntry(newEntry);
-            assert((keys.size() <= 2*kInnerOrder && (!getParent() || (keys.size() >= kInnerOrder))) || !getParent());
+            assert((keys.size() <= 2 * kInnerOrder && (!getParent() || (keys.size() >= kInnerOrder))) || !getParent());
             return;
         }
     }
     children.back()->insertEntry(newEntry);
-    assert((keys.size() <= 2*kInnerOrder && (!getParent() || (keys.size() >= kInnerOrder))) || !getParent());
+    assert((keys.size() <= 2 * kInnerOrder && (!getParent() || (keys.size() >= kInnerOrder))) || !getParent());
 }
 
 void InnerNode::deleteEntry(const DataEntry& entryToRemove) {
@@ -153,57 +161,43 @@ void InnerNode::insertChild(TreeNode* newChild, const Key& key) {
     assert((newChild != nullptr) && newChild->minKey() >= key);
     
     //update key in inner node (look at lecture slides)
-    auto lower_bound = std::lower_bound(keys.begin(),keys.end(),key);
-    keys.insert(lower_bound,key);
-    
-    lower_bound = std::lower_bound(keys.begin(),keys.end(),key);
-    auto i = children.begin() + (lower_bound - keys.begin()) + 1;
-    newChild->updateParent(this);
-    children.insert(i,newChild);
+    auto upper_bound = std::upper_bound(keys.begin(), keys.end(), key);
+    auto i = children.begin() + (upper_bound - keys.begin()) + 1;
+    keys.insert(upper_bound, key);
+    children.insert(i, newChild);
     
     //check if we need to split inner node
-    if(children.size() > 2*kInnerOrder+1){
+    if (keys.size() > 2*kInnerOrder) {
         
-        unsigned long middle = (children.size()-1)/2;
-        Key newParentValue = this->keys[middle];
+        auto middle = kInnerOrder + keys.begin();
+        Key newParentValue = *middle;
         
-        vector<Key> newKeys;
-        vector<TreeNode *> newChildren;
+        TreeNode* childone = children[kInnerOrder+1];
+        Key keyone = keys[kInnerOrder+1];
+        TreeNode* childtwo = children[kInnerOrder+2];
+        InnerNode* keytwo = getParent();
+        InnerNode *innerNodeIn = new InnerNode(childone, keyone, childtwo, keytwo);
+        unsigned int begin = kInnerOrder + 2;
+        unsigned int end = kInnerOrder*2;
         
-        //push correct children into newly created innerNode
-        for(unsigned long i = middle+1; i < children.size(); ++i){
-            newChildren.push_back(children[i]);
+        for (unsigned int i = begin; i <= end; i++) {
+            innerNodeIn->children.push_back(children[i+1]);
+            innerNodeIn->keys.push_back(keys[i]);
+            innerNodeIn->children.back()->updateParent(innerNodeIn);
         }
-        
-        //remove the recently pushed children from current innerNode
-        for(unsigned long i = middle+1; i < children.size(); ++i){
-            this->children.pop_back();
+        for (unsigned int i = 0; i < kInnerOrder + 1; i++) {
+            children.pop_back();
+            keys.pop_back();
         }
-        
-        for(unsigned long i = middle+1; i < keys.size(); ++i){
-            newKeys.push_back(keys[i]);
-        }
-        
-        for(unsigned long i = middle+1; i < keys.size(); ++i){
-            this->keys.pop_back();
-        }
-        
-        
-        //how would you construct this
-        InnerNode *newInnerNode = new InnerNode(newChildren[0],newKeys[0],newChildren[1],this->getParent());
-        setVectors(newInnerNode,newChildren,newKeys);
-        
         if (!getParent()) {
-            InnerNode* createParent = new InnerNode(this,newParentValue,newInnerNode);
+            InnerNode *createParent = new InnerNode(this, newParentValue, innerNodeIn);
+            innerNodeIn->updateParent(createParent);
             updateParent(createParent);
-            newInnerNode->updateParent(createParent);
         }
-        
         else {
-            getParent()->insertChild(newInnerNode,newParentValue);
+            getParent()->insertChild(innerNodeIn, newParentValue);
         }
     }
-    
 }
 
 void InnerNode::deleteChild(TreeNode* childToRemove) {
