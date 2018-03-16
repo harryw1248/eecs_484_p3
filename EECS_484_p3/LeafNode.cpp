@@ -155,4 +155,40 @@ void LeafNode::insertEntry(const DataEntry& newEntry) {
 
 void LeafNode::deleteEntry(const DataEntry& entryToRemove) {
     // TO DO: implement this function
+    
+    assert(this->contains(entryToRemove));
+    
+    if(this->entries.size() == kLeafOrder){
+        auto i = std::lower_bound(this->entries.begin(),this->entries.end(),entryToRemove);
+        entries.erase(i);
+        
+        //check if we can borrow from right
+        if(this->rightNeighbor->entries.size() > kLeafOrder){
+            this->entries.push_back(this->rightNeighbor->entries[0]);
+            this->rightNeighbor->entries.erase(this->rightNeighbor->entries.begin());
+        }
+        //check if we can borrow from left
+        else if(this->leftNeighbor->entries.size() > kLeafOrder){
+            this->entries.push_back(this->leftNeighbor->entries[kLeafOrder]);
+            this->leftNeighbor->entries.pop_back();
+        }
+        //merge with right
+        else if(this->rightNeighbor->entries.size() == kLeafOrder){
+            for(int i = 0; i < kLeafOrder; ++i){
+                this->entries.push_back(this->rightNeighbor->entries[i]);
+            }
+            this->getParent()->deleteChild(this->rightNeighbor);
+        }
+        //merge with left and then delete this
+        else{
+            for(int i = 0; i < kLeafOrder; ++i){
+                this->rightNeighbor->entries.push_back(this->entries[i]);
+            }
+            delete this;
+        }
+    }
+    else{
+        auto i = std::lower_bound(this->entries.begin(),this->entries.end(),entryToRemove);
+        entries.erase(i);
+    }
 }
