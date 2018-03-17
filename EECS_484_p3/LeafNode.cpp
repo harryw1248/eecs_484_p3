@@ -132,7 +132,6 @@ void LeafNode::insertEntry(const DataEntry& newEntry) {
         
         setEntries(newLeaf,rightHalf_vector);
         
-        //segfaulting
         if(this->getParent()){
             this->getParent()->insertChild(newLeaf,(Key)newLeaf->entries[0]);
         }

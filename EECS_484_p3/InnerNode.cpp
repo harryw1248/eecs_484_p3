@@ -12,6 +12,8 @@ using std::any_of;
 using std::vector; using std::string;
 using std::ostream;
 
+using namespace std;
+
 
 // value constructor
 InnerNode::InnerNode(TreeNode* child1, const Key& key, TreeNode* child2, InnerNode* parent)
@@ -32,15 +34,6 @@ public:
     }
 };
 
-//InnerNode::InnerNode(vector<TreeNode*> childs, vector<Key> keyer, InnerNode *parent)
-//: TreeNode{parent}, keys {keyer}, children {childs} {
-//
-//    for(auto &kid : childs){
-//        assert(kid != nullptr);
-//        kid -> updateParent(this);
-//    }
-//}
-
 void InnerNode::setVectors(InnerNode* innerNodeIn, vector<TreeNode*>childrenIn, vector<Key>keysIn) {
     for (unsigned i = 0; i < childrenIn.size(); ++i) {
         this->children.push_back(childrenIn[i]);
@@ -48,6 +41,38 @@ void InnerNode::setVectors(InnerNode* innerNodeIn, vector<TreeNode*>childrenIn, 
     for (unsigned i = 0; i < keysIn.size(); ++i) {
         this->keys.push_back(keysIn[i]);
     }
+}
+
+InnerNode* InnerNode::getSibling(InnerNode* innerNodeIn, char direction){
+    InnerNode* parent = innerNodeIn->getParent();
+    assert(parent != nullptr);
+    auto i = find(parent->children.begin(),parent->children.end(),innerNodeIn);
+    unsigned long distance = i - parent->children.begin();
+    if(direction == 'R'){
+        if(distance == parent->children.size()-1){
+            return nullptr;
+        }
+        else{
+            return static_cast<InnerNode*>(parent->children[distance+1]);
+        }
+    }
+    else if(direction == 'L'){
+        if(distance == 0){
+            return nullptr;
+        }
+        else{
+            return static_cast<InnerNode*>(parent->children[distance-1]);
+        }
+    }
+    return nullptr;
+}
+
+Key InnerNode::findRightKey(InnerNode* innerNodeIn){
+    InnerNode* parent = innerNodeIn->getParent();
+    assert(parent != nullptr);
+    auto i = find(parent->children.begin(),parent->children.end(),innerNodeIn);
+    unsigned long distance = i - parent->children.begin();
+    return parent->keys[distance];
 }
 
 // deallocate all children
@@ -118,6 +143,9 @@ vector<DataEntry> InnerNode::rangeFind(const Key& begin, const Key& end) const {
 
 void InnerNode::updateKey(const TreeNode* rightDescendant, const Key& newKey) {
     // TO DO: implement this function
+    auto i = std::find(this->children.begin(),this->children.end(),rightDescendant);
+    unsigned long index = (this->children.begin()-i) - 1;
+    this->keys[index] = newKey;
 }
 
 // use generic delete, then look at number of children to determine
@@ -204,8 +232,47 @@ void InnerNode::deleteChild(TreeNode* childToRemove) {
     
     // TO DO: implement this function
     
-    //case where tree height decreases
-    if(this->keys.size() == 1){
+    if(this->keys.size() == kLeafOrder){
+        //first try borrowing leafNode from right sibling
+        if(this->getParent() != nullptr && getSibling(this,'R')->children.size() >= 3){
+            //Borrow one child over
+            this->children.push_back(getSibling(this,'R')->children[0]);
+            getSibling(this,'R')->children.erase(getSibling(this,'R')->children.begin());
+            
+            //update key of this
+            Key thisKey = findRightKey(this);
+            this->updateKey(this->children[kLeafOrder-1],thisKey);
+            
+            //update keys of right sibling
+            getSibling(this,'R')->keys.erase(getSibling(this,'R')->keys.begin());
+            
+            //update key of parent
+            this->getParent()->updateKey(getSibling(this,'R'),getSibling(this,'R')->keys[0]);
+        }
+        //try borrowing leafNode from left sibling
+        else if(this->getParent() != nullptr){
+            
+        }
+        
+        //try merging with right
+        else if(getSibling(this,'R')->children.size() == 2){
+            this->children.push_back(getSibling(this,'R')->children[0]);
+            this->children.push_back(getSibling(this,'R')->children[1]);
+            getSibling(this,'R')->children.erase(getSibling(this,'R')->children.begin());
+            getSibling(this,'R')->children.erase(getSibling(this,'R')->children.begin());
+            delete  getSibling(this,'R');
+            if(this->getParent()->children.size() >= 2){
+                //updateKeys
+            }
+            else{
+                delete this->getParent();
+            }
+        }
+        
+        //try merging with left
+        else{
+            
+        }
         
     }
     else{
