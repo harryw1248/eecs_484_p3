@@ -253,36 +253,45 @@ void InnerNode::deleteChild(TreeNode* childToRemove) {
         else if(this->getParent() != nullptr && getSibling(this,'L')->children.size() >= 3){
             //Borrow one child over
             this->children.push_back(getSibling(this,'L')->children[getSibling(this,'L')->children.size()-1]);
-            getSibling(this,'L')->children.erase(getSibling(this,'L')->children.begin() + (getSibling(this,'L')->children.size()-1));
+            getSibling(this,'L')->children.pop_back();
             
             //update key of this
             this->updateKey(this->children[kLeafOrder-1],getSibling(this,'L')->keys[getSibling(this,'L')->keys.size()-1]);
             
             //update keys of left sibling
-            getSibling(this,'L')->keys.erase(getSibling(this,'L')->keys.begin() + (getSibling(this,'L')->keys.size()-1));
+            getSibling(this,'L')->keys.pop_back();
             
             //update key of parent
             this->getParent()->updateKey(this,this->keys[0]);
         }
         
         //try merging with right
-        else if(getSibling(this,'R')->children.size() == 2){
-            this->children.push_back(getSibling(this,'R')->children[0]);
-            this->children.push_back(getSibling(this,'R')->children[1]);
-            getSibling(this,'R')->children.erase(getSibling(this,'R')->children.begin());
-            getSibling(this,'R')->children.erase(getSibling(this,'R')->children.begin());
-            delete  getSibling(this,'R');
-            if(this->getParent()->children.size() >= 2){
+        else if(getSibling(this,'R')->keys.size() == kLeafOrder){
+            for(int i = 0; i < getSibling(this,'R')->children.size(); ++i){
+                this->children.push_back(getSibling(this,'R')->children[i]);
+            }
+            delete getSibling(this,'R');
+            if(this->getParent()->children.size() > kLeafOrder){
                 //updateKeys
+                this->getParent()->keys.pop_back(); //not right
             }
             else{
                 delete this->getParent();
             }
         }
-        
         //try merging with left
         else{
-            
+            for(int i = 0; i < this->children.size(); ++i){
+                getSibling(this,'L')->children.push_back(this->children[i]);
+            }
+            if(this->getParent()->children.size() > kLeafOrder){
+                //updateKeys
+                this->getParent()->keys.pop_back(); //not right
+            }
+            else{
+                delete this->getParent();
+            }
+            delete this;
         }
         
     }
