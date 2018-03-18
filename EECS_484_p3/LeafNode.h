@@ -80,6 +80,9 @@ public:
     
     void setEntries(LeafNode *ln,std::vector<DataEntry>entriesIn);
     
+    void setNeighborsToNull();
+
+    
 private:
     LeafNode* leftNeighbor;
     LeafNode* rightNeighbor;

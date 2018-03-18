@@ -127,6 +127,8 @@ public:
     
     Key findRightKey(InnerNode* innerNodeIn);
     
+    Key findSibingKey(InnerNode* innerNodeIn, char direction);
+        
 private:
     std::vector<Key> keys;
     std::vector<TreeNode*> children;

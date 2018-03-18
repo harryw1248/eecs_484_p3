@@ -27,6 +27,12 @@ void LeafNode::setEntries(LeafNode *ln,vector<DataEntry>entriesIn){
     }
 }
 
+void LeafNode::setNeighborsToNull(){
+    this->rightNeighbor = nullptr;
+    this->leftNeighbor = nullptr;
+}
+
+
 // print keys of data entries surrounded by curly braces, ending
 // newline
 void LeafNode::print(ostream& os, int indent) const {
@@ -171,17 +177,26 @@ void LeafNode::deleteEntry(const DataEntry& entryToRemove) {
             this->entries.push_back(this->leftNeighbor->entries[kLeafOrder]);
             this->leftNeighbor->entries.pop_back();
         }
+        //NEED to reset neighbors during merging
         //merge with right
         else if(this->rightNeighbor->entries.size() == kLeafOrder){
-            for(int i = 0; i < kLeafOrder; ++i){
+            for(unsigned int i = 0; i < kLeafOrder; ++i){
                 this->entries.push_back(this->rightNeighbor->entries[i]);
+            }
+            if(this->rightNeighbor->rightNeighbor != nullptr){
+                this->rightNeighbor->leftNeighbor = this;
+                this->rightNeighbor = this->rightNeighbor->rightNeighbor;
             }
             this->getParent()->deleteChild(this->rightNeighbor);
         }
         //merge with left and then delete this
         else{
-            for(int i = 0; i < kLeafOrder; ++i){
+            for(int unsigned i = 0; i < kLeafOrder; ++i){
                 this->rightNeighbor->entries.push_back(this->entries[i]);
+            }
+            if(this->rightNeighbor != nullptr){
+                this->rightNeighbor->leftNeighbor = this->leftNeighbor;
+                this->leftNeighbor->rightNeighbor = this->rightNeighbor;
             }
             delete this;
         }
