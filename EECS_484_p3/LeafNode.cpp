@@ -112,15 +112,18 @@ void LeafNode::insertEntry(const DataEntry& newEntry) {
     
     //case where leaf node is full
     if(entries.size() >= 2*kLeafOrder){
-        
-        LeafNode *newLeaf = new LeafNode(this->getParent());
-        newLeaf->rightNeighbor = this->rightNeighbor;
-        this->rightNeighbor = newLeaf;
-        newLeaf->leftNeighbor = this;
-        
+//        
+//        LeafNode *newLeaf = new LeafNode(this->getParent());
+        LeafNode *newLeaf = new LeafNode{nullptr};
         if(this->rightNeighbor != nullptr){
             this->rightNeighbor->leftNeighbor = newLeaf;
         }
+        newLeaf->rightNeighbor = this->rightNeighbor;
+        this->rightNeighbor = newLeaf;
+        newLeaf->leftNeighbor = this;
+        newLeaf->updateParent(this->getParent());
+        
+
         
         vector<DataEntry>rightHalf_vector;
         //create second half
@@ -174,18 +177,18 @@ void LeafNode::deleteEntry(const DataEntry& entryToRemove) {
         entries.erase(i);
         
         //check if we can borrow from right
-        if(this->rightNeighbor->entries.size() > kLeafOrder){
+        if(this->rightNeighbor != nullptr && this->rightNeighbor->entries.size() > kLeafOrder){
             this->entries.push_back(this->rightNeighbor->entries[0]);
             this->rightNeighbor->entries.erase(this->rightNeighbor->entries.begin());
         }
         //check if we can borrow from left
-        else if(this->leftNeighbor->entries.size() > kLeafOrder){
+        else if(this->leftNeighbor != nullptr && this->leftNeighbor->entries.size() > kLeafOrder){
             this->entries.push_back(this->leftNeighbor->entries[kLeafOrder]);
             this->leftNeighbor->entries.pop_back();
         }
         //NEED to reset neighbors during merging
         //merge with right
-        else if(this->rightNeighbor->entries.size() == kLeafOrder){
+        else if(this->rightNeighbor != nullptr && this->rightNeighbor->entries.size() == kLeafOrder){
             for(unsigned int i = 0; i < kLeafOrder; ++i){
                 this->entries.push_back(this->rightNeighbor->entries[i]);
             }
@@ -198,13 +201,13 @@ void LeafNode::deleteEntry(const DataEntry& entryToRemove) {
         //merge with left and then delete this
         else{
             for(int unsigned i = 0; i < kLeafOrder; ++i){
-                this->rightNeighbor->entries.push_back(this->entries[i]);
+                this->leftNeighbor->entries.push_back(this->entries[i]);
             }
             if(this->rightNeighbor != nullptr){
                 this->rightNeighbor->leftNeighbor = this->leftNeighbor;
                 this->leftNeighbor->rightNeighbor = this->rightNeighbor;
             }
-            delete this;
+            this->getParent()->deleteChild(this);
         }
     }
     else{

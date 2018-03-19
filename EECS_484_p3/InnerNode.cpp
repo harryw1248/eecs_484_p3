@@ -254,7 +254,7 @@ void InnerNode::deleteChild(TreeNode* childToRemove) {
     
     if(this->keys.size() == kLeafOrder){
         //first try borrowing leafNode from right sibling
-        if(this->getParent() != nullptr && getSibling(this,'R')->children.size() >= 3){
+        if(this->getParent() != nullptr && getSibling(this,'R') != nullptr && getSibling(this,'R')->children.size() > kLeafOrder){
             //Borrow one child over
             this->children.push_back(getSibling(this,'R')->children[0]);
             getSibling(this,'R')->children.erase(getSibling(this,'R')->children.begin());
@@ -270,7 +270,7 @@ void InnerNode::deleteChild(TreeNode* childToRemove) {
             this->getParent()->updateKey(getSibling(this,'R'),getSibling(this,'R')->keys[0]);
         }
         //try borrowing leafNode from left sibling
-        else if(this->getParent() != nullptr && getSibling(this,'L')->children.size() >= 3){
+        else if(this->getParent() != nullptr &&  getSibling(this,'L') != nullptr && getSibling(this,'L')->children.size() > kLeafOrder){
             //Borrow one child over
             this->children.push_back(getSibling(this,'L')->children[getSibling(this,'L')->children.size()-1]);
             getSibling(this,'L')->children.pop_back();
@@ -286,7 +286,7 @@ void InnerNode::deleteChild(TreeNode* childToRemove) {
         }
         
         //try merging with right
-        else if(getSibling(this,'R')->keys.size() == kLeafOrder){
+        else if(getSibling(this,'R') != nullptr && getSibling(this,'R')->keys.size() == kLeafOrder){
             for(unsigned int i = 0; i < getSibling(this,'R')->children.size(); ++i){
                 this->children.push_back(getSibling(this,'R')->children[i]);
             }

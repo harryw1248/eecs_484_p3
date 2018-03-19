@@ -47,6 +47,7 @@
 		08C3F7D2205089F600A233DC /* TreeNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeNode.h; sourceTree = "<group>"; };
 		08C3F7D3205089F600A233DC /* Utilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Utilities.cpp; sourceTree = "<group>"; };
 		08C3F7D4205089F600A233DC /* Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utilities.h; sourceTree = "<group>"; };
+		08E5C16C20602F8E00FF0662 /* caenPush.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = caenPush.sh; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +80,7 @@
 		08C3F7BF205089BF00A233DC /* EECS_484_p3 */ = {
 			isa = PBXGroup;
 			children = (
+				08E5C16C20602F8E00FF0662 /* caenPush.sh */,
 				08C3F7C7205089F600A233DC /* BTree.cpp */,
 				08C3F7C8205089F600A233DC /* BTree.h */,
 				0837441B20577AF900CD2BD9 /* submit.sh */,
