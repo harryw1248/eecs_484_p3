@@ -196,8 +196,8 @@ void InnerNode::deleteEntry(const DataEntry& entryToRemove) {
     
     Key getRemovalKey = Key(entryToRemove);
     
-    int i = 0;
-    while(getRemovalKey >= keys[i] && keys.size() > i){
+    unsigned int i = 0;
+    while(keys.size() > i && getRemovalKey >= keys[i]){
         i++;
     }
     
@@ -252,9 +252,13 @@ void InnerNode::deleteChild(TreeNode* childToRemove) {
     
     // TO DO: implement this function
     
+    InnerNode* rightSibling = getSibling(this,'R');
+    InnerNode* leftSibling = getSibling(this,'L');
+
+    
     if(this->keys.size() == kLeafOrder){
         //first try borrowing leafNode from right sibling
-        if(this->getParent() != nullptr && getSibling(this,'R') != nullptr && getSibling(this,'R')->children.size() > kLeafOrder){
+        if(this->getParent() != nullptr && getSibling(this,'R') != nullptr && getSibling(this,'R')->keys.size() > kLeafOrder){
             //Borrow one child over
             this->children.push_back(getSibling(this,'R')->children[0]);
             getSibling(this,'R')->children.erase(getSibling(this,'R')->children.begin());
@@ -270,7 +274,7 @@ void InnerNode::deleteChild(TreeNode* childToRemove) {
             this->getParent()->updateKey(getSibling(this,'R'),getSibling(this,'R')->keys[0]);
         }
         //try borrowing leafNode from left sibling
-        else if(this->getParent() != nullptr &&  getSibling(this,'L') != nullptr && getSibling(this,'L')->children.size() > kLeafOrder){
+        else if(this->getParent() != nullptr &&  getSibling(this,'L') != nullptr && getSibling(this,'L')->keys.size() > kLeafOrder){
             //Borrow one child over
             this->children.push_back(getSibling(this,'L')->children[getSibling(this,'L')->children.size()-1]);
             getSibling(this,'L')->children.pop_back();
