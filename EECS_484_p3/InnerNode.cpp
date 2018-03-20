@@ -67,7 +67,7 @@ InnerNode* InnerNode::getSibling(InnerNode* innerNodeIn, char direction){
     return nullptr;
 }
 
-Key InnerNode::findSibingKey(InnerNode* innerNodeIn, char direction){
+Key InnerNode::findSiblingKey(InnerNode* innerNodeIn, char direction){
     auto i = getSibling(innerNodeIn,direction);
     auto i2 = static_cast<InnerNode*>(innerNodeIn->getParent()->children.front());
     auto i3 = i - i2;
@@ -81,7 +81,7 @@ Key InnerNode::findRightKey(InnerNode* innerNodeIn){
     assert(parent != nullptr);
     auto i = find(parent->children.begin(),parent->children.end(),innerNodeIn);
     unsigned long distance = i - parent->children.begin();
-    return parent->keys[distance];
+    return parent->keys[distance-1];
 }
 
 // deallocate all children
@@ -274,13 +274,15 @@ void InnerNode::deleteChild(TreeNode* childToRemove) {
             this->getParent()->updateKey(getSibling(this,'R'),getSibling(this,'R')->keys[0]);
         }
         //try borrowing leafNode from left sibling
+        //problem
         else if(this->getParent() != nullptr &&  getSibling(this,'L') != nullptr && getSibling(this,'L')->keys.size() > kLeafOrder){
             //Borrow one child over
             this->children.push_back(getSibling(this,'L')->children[getSibling(this,'L')->children.size()-1]);
             getSibling(this,'L')->children.pop_back();
             
             //update key of this
-            this->updateKey(this->children[kLeafOrder-1],getSibling(this,'L')->keys[getSibling(this,'L')->keys.size()-1]);
+            //push key to front
+            this->updateKey(this->children[1],this->children[1]->minKey());
             
             //update keys of left sibling
             getSibling(this,'L')->keys.pop_back();
@@ -297,7 +299,7 @@ void InnerNode::deleteChild(TreeNode* childToRemove) {
             delete getSibling(this,'R');
             if(this->getParent()->children.size() > kLeafOrder){
                 //updateKeys
-                Key deleteKey = findSibingKey(this,'R');
+                Key deleteKey = findSiblingKey(this,'R');
                 this->getParent()->keys.erase(remove(keys.begin(),keys.end(),deleteKey),keys.end());
                 
             }
@@ -307,16 +309,24 @@ void InnerNode::deleteChild(TreeNode* childToRemove) {
         }
         //try merging with left
         else{
+            for(unsigned int i = 0; i < children.size(); ++i){
+                if(children[i] == childToRemove){
+                    children.erase(children.begin() + i);
+                }
+            }
             for(unsigned int i = 0; i < this->children.size(); ++i){
                 getSibling(this,'L')->children.push_back(this->children[i]);
             }
-            if(this->getParent()->children.size() > kLeafOrder){
+            //update key
+            this->getSibling(this,'L')->keys.push_back(this->getSibling(this,'L')->maxKey());
+            if(this->getParent()->children.size() > kLeafOrder+1){
                 //updateKeys
-                Key deleteKey = findSibingKey(this,'L');
+                Key deleteKey = findSiblingKey(this,'L');
                 this->getParent()->keys.erase(remove(keys.begin(),keys.end(),deleteKey),keys.end());
             }
             else{
-                delete this->getParent();
+                //delete this->getParent();
+                this->getSibling(this,'L')->keys.push_back(findRightKey(this));
             }
             delete this;
         }

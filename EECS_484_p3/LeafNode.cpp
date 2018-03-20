@@ -19,7 +19,7 @@ using std::string;
 
 // constructor
 LeafNode::LeafNode(InnerNode* parent)
-: TreeNode{ parent }, entries{} {}
+: TreeNode{ parent }, entries{}, leftNeighbor{nullptr}, rightNeighbor{nullptr} {}
 
 void LeafNode::setEntries(LeafNode *ln,vector<DataEntry>entriesIn){
     for(unsigned i = 0; i < entriesIn.size(); ++i){
@@ -117,13 +117,12 @@ void LeafNode::insertEntry(const DataEntry& newEntry) {
         LeafNode *newLeaf = new LeafNode{nullptr};
         if(this->rightNeighbor != nullptr){
             this->rightNeighbor->leftNeighbor = newLeaf;
+            newLeaf->rightNeighbor = this->rightNeighbor;
         }
-        newLeaf->rightNeighbor = this->rightNeighbor;
+
         this->rightNeighbor = newLeaf;
         newLeaf->leftNeighbor = this;
         newLeaf->updateParent(this->getParent());
-        
-
         
         vector<DataEntry>rightHalf_vector;
         //create second half
@@ -183,7 +182,7 @@ void LeafNode::deleteEntry(const DataEntry& entryToRemove) {
         }
         //check if we can borrow from left
         else if(this->leftNeighbor != nullptr && this->leftNeighbor->entries.size() > kLeafOrder){
-            this->entries.push_back(this->leftNeighbor->entries[kLeafOrder]);
+            this->entries.insert(this->entries.begin(),this->leftNeighbor->entries[this->leftNeighbor->entries.size()-1]);
             this->leftNeighbor->entries.pop_back();
         }
         //NEED to reset neighbors during merging
@@ -200,7 +199,7 @@ void LeafNode::deleteEntry(const DataEntry& entryToRemove) {
         }
         //merge with left and then delete this
         else{
-            for(int unsigned i = 0; i < kLeafOrder; ++i){
+            for(int unsigned i = 0; i < kLeafOrder-1; ++i){
                 this->leftNeighbor->entries.push_back(this->entries[i]);
             }
             if(this->rightNeighbor != nullptr){
