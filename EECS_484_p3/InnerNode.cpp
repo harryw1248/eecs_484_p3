@@ -275,6 +275,13 @@ void InnerNode::deleteChild(TreeNode* childToRemove) {
         if(this->keys.size() == kLeafOrder){
             //first try borrowing leafNode from right sibling
             if(this->getParent() != nullptr && getSibling(this,'R') != nullptr && getSibling(this,'R')->keys.size() > kLeafOrder){
+                
+                for(unsigned int i = 0; i < children.size(); ++i){
+                    if(children[i] == childToRemove){
+                        children.erase(children.begin() + i);
+                    }
+                }
+                
                 //Borrow one child over
                 this->children.push_back(getSibling(this,'R')->children[0]);
                 getSibling(this,'R')->children.erase(getSibling(this,'R')->children.begin());
