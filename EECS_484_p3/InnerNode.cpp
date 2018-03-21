@@ -365,7 +365,7 @@ void InnerNode::deleteChild(TreeNode* childToRemove) {
         else{
             //put parent's key into left sibling
             Key thisKey = findRightKey(this);
-            this->updateKey(this->getSibling(this,'L')->children[kLeafOrder+1],thisKey);
+            this->getSibling(this,'L')->updateKey(this->getSibling(this,'L')->children[kLeafOrder],thisKey);
             
             //put this' key into parent
             Key parentNewKey = this->keys[0];
