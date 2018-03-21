@@ -155,7 +155,13 @@ const DataEntry& InnerNode::operator[](const Key& key) const {
 
 vector<DataEntry> InnerNode::rangeFind(const Key& begin, const Key& end) const {
     // TO DO: implement this function
-    return vector<DataEntry>{};
+    assert(begin <= end);
+    
+    unsigned int count = 0;
+    while (keys.size() > count && keys.at(count) <= begin)
+        count++;
+    
+    return children.at(count)->rangeFind(begin, end);
 }
 
 void InnerNode::updateKey(const TreeNode* rightDescendant, const Key& newKey) {

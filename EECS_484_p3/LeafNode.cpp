@@ -87,13 +87,24 @@ const DataEntry& LeafNode::operator[](const Key& key) const {
 
 vector<DataEntry> LeafNode::rangeFind(const Key& begin, const Key& end) const {
     // TO DO: implement this function
-    vector<DataEntry>rangeFound;
-    for(unsigned long i = 0; i < this->entries.size(); ++i){
-        if(this->entries[i] >= begin && this->entries[i] <= end){
-            rangeFound.push_back(this->entries[i]);
+    assert(begin <= end);
+    
+    auto leaf = this;
+    vector<DataEntry> vec;
+    while (leaf) {
+        for (auto& idx : this->entries) {
+            Key key = Key(idx);
+            
+            if (key >= begin && end >= key)
+                vec.push_back(idx);
+            if (end <= key)
+                return vec;
         }
+        
+        leaf = this->rightNeighbor;
     }
-    return rangeFound;
+    
+    return vec;
 }
 
 // use generic delete; height can't decrease
