@@ -293,9 +293,21 @@ void InnerNode::deleteChild(TreeNode* childToRemove) {
             //problem
             else if(this->getParent() != nullptr &&  getSibling(this,'L') != nullptr && getSibling(this,'L')->keys.size() > kLeafOrder){
                 //Borrow one child over
-                this->children.push_back(getSibling(this,'L')->children[getSibling(this,'L')->children.size()-1]);
+                //insert to front
+                for(unsigned int i = 0; i < children.size(); ++i){
+                    if(children[i] == childToRemove){
+                        children.erase(children.begin() + i);
+                    }
+                }
+                this->children.insert(this->children.begin(),getSibling(this,'L')->children[getSibling(this,'L')->children.size()-1]);
+                
+                //this->children.push_back(getSibling(this,'L')->children[getSibling(this,'L')->children.size()-1]);
+                //std::sort(this->children.begin(),this->children.end());
+                //this->children.pop_back();
+                
                 getSibling(this,'L')->children[getSibling(this,'L')->children.size()-1]->updateParent(this);
                 getSibling(this,'L')->children.pop_back();
+                
                 
                 //update key of this
                 //push key to front
