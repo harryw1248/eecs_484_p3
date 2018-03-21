@@ -84,9 +84,9 @@ public:
     void setNeighborsToNull();
     
 private:
+    std::vector<DataEntry> entries;
     LeafNode* leftNeighbor;
     LeafNode* rightNeighbor;
-    std::vector<DataEntry> entries;
 };
 
 #endif
