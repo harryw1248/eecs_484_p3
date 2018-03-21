@@ -82,8 +82,14 @@ Key InnerNode::findRightKey(InnerNode* innerNodeIn){
     InnerNode* parent = innerNodeIn->getParent();
     assert(parent != nullptr);
     auto i = find(parent->children.begin(),parent->children.end(),innerNodeIn);
-    unsigned long distance = i - parent->children.begin();
+    unsigned long distance = std::distance(parent->children.begin(), i);
     return parent->keys[distance-1];
+}
+
+Key InnerNode::findRightKey(LeafNode* leafNodeIn){
+    auto i = find(this->children.begin(),this->children.end(),leafNodeIn);
+    unsigned long distance = std::distance(this->children.begin(), i);
+    return this->keys[distance-1];
 }
 
 // deallocate all children
@@ -155,7 +161,7 @@ vector<DataEntry> InnerNode::rangeFind(const Key& begin, const Key& end) const {
 void InnerNode::updateKey(const TreeNode* rightDescendant, const Key& newKey) {
     // TO DO: implement this function
     auto i = std::find(this->children.begin(),this->children.end(),rightDescendant);
-    unsigned long index = (this->children.begin()-i) - 1;
+    unsigned long index = std::distance(this->children.begin(), i) - 1;
     this->keys[index] = newKey;
 }
 
@@ -201,8 +207,8 @@ void InnerNode::deleteEntry(const DataEntry& entryToRemove) {
     Key getRemovalKey = Key(entryToRemove);
     
     unsigned int i = 0;
-    while(keys.size() > i && getRemovalKey >= keys[i]){
-        i++;
+    while(i < keys.size() && getRemovalKey >= keys[i]){
+        ++i;
     }
     
     children[i] -> deleteEntry(entryToRemove);
@@ -298,9 +304,12 @@ void InnerNode::deleteChild(TreeNode* childToRemove) {
             //try merging with right
             else if(getSibling(this,'R') != nullptr && getSibling(this,'R')->keys.size() == kLeafOrder){
                 for(unsigned int i = 0; i < getSibling(this,'R')->children.size(); ++i){
+                    getSibling(this,'R')->children[i]->updateParent(this);
                     this->children.push_back(getSibling(this,'R')->children[i]);
                 }
-                delete getSibling(this,'R');
+                for(unsigned int i = 0; i < getSibling(this,'R')->children.size(); ++i){
+                    getSibling(this,'R')->children.pop_back();
+                }
                 if(this->getParent()->children.size() > kLeafOrder){
                     //updateKeys
                     Key deleteKey = findSiblingKey(this,'R');
@@ -308,8 +317,12 @@ void InnerNode::deleteChild(TreeNode* childToRemove) {
                     
                 }
                 else{
-                    delete this->getParent();
+                    this->updateParent(this->getParent()->getParent());
+                    //delete this->getParent();
                 }
+                this->getParent()->children.erase(remove(this->getParent()->children.begin(),this->getParent()->children.end(),getSibling(this,'R'))
+                                                  ,this->getParent()->children.end());
+                
             }
             //try merging with left
             else if(getSibling(this,'L') != nullptr && getSibling(this,'L')->keys.size() == kLeafOrder){
@@ -349,7 +362,9 @@ void InnerNode::deleteChild(TreeNode* childToRemove) {
     else{
         auto i = std::find(this->children.begin(),this->children.end(),childToRemove);
         unsigned long distance = std::distance(this->children.begin(), i);
-        this->children.erase(i);
-        this->keys.erase(this->keys.begin() + (distance-1));
+        this->children.erase(children.begin() + distance);
+        if(distance > 0){
+            this->keys.erase(this->keys.begin() + (distance-1));
+        }
     }
 }
