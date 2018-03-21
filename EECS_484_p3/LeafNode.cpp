@@ -199,11 +199,16 @@ void LeafNode::deleteEntry(const DataEntry& entryToRemove) {
             for(unsigned int i = 0; i < kLeafOrder; ++i){
                 this->entries.push_back(this->rightNeighbor->entries[i]);
             }
+            for(unsigned int i = 0; i < kLeafOrder; ++i){
+                this->rightNeighbor->entries.pop_back();
+            }
             if(this->rightNeighbor->rightNeighbor != nullptr){
                 this->rightNeighbor->rightNeighbor->leftNeighbor = this;
             }
             auto temp = this->rightNeighbor->rightNeighbor;
-            this->getParent()->deleteChild(this->rightNeighbor);
+            //this->getParent()->deleteChild(this->rightNeighbor);
+            this->getParent()->getSibling(this->getParent(),'R')->deleteChild(this->rightNeighbor);
+
             this->rightNeighbor = temp;
         }
         //merge with left and then delete this

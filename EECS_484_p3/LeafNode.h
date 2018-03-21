@@ -6,6 +6,7 @@
 #include "Utilities.h"                                          // for size constants
 #include <iosfwd>                                               // for ostream forward declaration
 #include <vector>                                               // for vector
+//#include "InnerNode.h"
 
 class InnerNode;                                                // only used as pointer or function argument
 

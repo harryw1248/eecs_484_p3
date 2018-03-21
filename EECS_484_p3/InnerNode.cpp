@@ -303,6 +303,11 @@ void InnerNode::deleteChild(TreeNode* childToRemove) {
             
             //try merging with right
             else if(getSibling(this,'R') != nullptr && getSibling(this,'R')->keys.size() == kLeafOrder){
+                for(unsigned int i = 0; i < children.size(); ++i){
+                    if(children[i] == childToRemove){
+                        children.erase(children.begin() + i);
+                    }
+                }
                 for(unsigned int i = 0; i < getSibling(this,'R')->children.size(); ++i){
                     getSibling(this,'R')->children[i]->updateParent(this);
                     this->children.push_back(getSibling(this,'R')->children[i]);
