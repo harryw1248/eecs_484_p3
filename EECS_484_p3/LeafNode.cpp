@@ -207,7 +207,16 @@ void LeafNode::deleteEntry(const DataEntry& entryToRemove) {
             }
             auto temp = this->rightNeighbor->rightNeighbor;
             //this->getParent()->deleteChild(this->rightNeighbor);
-            this->getParent()->getSibling(this->getParent(),'R')->deleteChild(this->rightNeighbor);
+            
+            //if borrowing from a non-sibling
+            if(this->getCommonAncestor(this->rightNeighbor) != this->getParent()){
+                this->getParent()->getSibling(this->getParent(),'R')->deleteChild(this->rightNeighbor);
+            }
+            //if borrowing from a sibling
+            else{
+                this->getParent()->deleteChild(this->rightNeighbor);
+            }
+            
 
             this->rightNeighbor = temp;
         }
