@@ -206,7 +206,7 @@ void LeafNode::deleteEntry(const DataEntry& entryToRemove) {
         //check if we can borrow from left
         else if(this->leftNeighbor != nullptr && this->leftNeighbor->entries.size() > kLeafOrder){
             
-            unsigned long sizeDifference = this->rightNeighbor->entries.size() - this->entries.size();
+            unsigned long sizeDifference = this->leftNeighbor->entries.size() - this->entries.size();
             unsigned long numTransferred = sizeDifference/2;
             
             for(unsigned long i = 0; i < numTransferred; ++i){
