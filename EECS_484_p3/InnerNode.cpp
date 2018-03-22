@@ -43,56 +43,62 @@ void InnerNode::setVectors(InnerNode* innerNodeIn, vector<TreeNode*>childrenIn, 
     }
 }
 
-InnerNode* InnerNode::getSibling(InnerNode* innerNodeIn, char direction){
+InnerNode* InnerNode::getSibling(InnerNode* innerNodeIn, char direction) {
     InnerNode* parent = innerNodeIn->getParent();
-    if(parent == nullptr){
+    if (parent == nullptr) {
         return nullptr;
     }
-    auto i = find(parent->children.begin(),parent->children.end(),innerNodeIn);
+    auto i = find(parent->children.begin(), parent->children.end(), innerNodeIn);
     unsigned long distance = i - parent->children.begin();
-    if(direction == 'R'){
-        if(distance == parent->children.size()-1){
+    if (direction == 'R') {
+        if (distance == parent->children.size() - 1) {
             return nullptr;
         }
-        else{
-            return static_cast<InnerNode*>(parent->children[distance+1]);
+        else {
+            return static_cast<InnerNode*>(parent->children[distance + 1]);
         }
     }
-    else if(direction == 'L'){
-        if(distance == 0){
+    else if (direction == 'L') {
+        if (distance == 0) {
             return nullptr;
         }
-        else{
-            return static_cast<InnerNode*>(parent->children[distance-1]);
+        else {
+            return static_cast<InnerNode*>(parent->children[distance - 1]);
         }
     }
     return nullptr;
 }
 
-Key InnerNode::findSiblingKey(InnerNode* innerNodeIn, char direction){
-    auto i = getSibling(innerNodeIn,direction);
-    auto i2 = static_cast<InnerNode*>(innerNodeIn->getParent()->children.front());
-    auto i3 = i - i2;
-    unsigned long keyDistance = i3 - 1;
+Key InnerNode::findSiblingKey(InnerNode* innerNodeIn, char direction) {
+    //auto i = std::find(innerNodeIn->getParent()->children.begin(), innerNodeIn->getParent()->children.end(), innerNodeIn);
+    unsigned int innerNodeInPos = 0;
+    for (unsigned int i = 0; i < innerNodeIn->getParent()->children.size(); ++i) {
+        if (innerNodeIn == innerNodeIn->getParent()->children[i]) {
+            innerNodeInPos = i;
+        }
+    }
+    //auto i2 = std::find(innerNodeIn->getParent()->children.begin(), innerNodeIn->getParent()->children.end(), innerNodeIn->getParent()->children.front());
+    //auto i3 = std::distance(i2, i);
+    unsigned int keyDistance = innerNodeInPos - 1;
     return innerNodeIn->getParent()->keys[keyDistance];
 }
 
 
-Key InnerNode::findRightKey(InnerNode* innerNodeIn){
+Key InnerNode::findRightKey(InnerNode* innerNodeIn) {
     InnerNode* parent = innerNodeIn->getParent();
     assert(parent != nullptr);
-    auto i = find(parent->children.begin(),parent->children.end(),innerNodeIn);
+    auto i = find(parent->children.begin(), parent->children.end(), innerNodeIn);
     unsigned long distance = std::distance(parent->children.begin(), i);
-    if(distance == 0){
+    if (distance == 0) {
         return parent->keys[0];
     }
-    return parent->keys[distance-1];
+    return parent->keys[distance - 1];
 }
 
-Key InnerNode::findRightKey(LeafNode* leafNodeIn){
-    auto i = find(this->children.begin(),this->children.end(),leafNodeIn);
+Key InnerNode::findRightKey(LeafNode* leafNodeIn) {
+    auto i = find(this->children.begin(), this->children.end(), leafNodeIn);
     unsigned long distance = std::distance(this->children.begin(), i);
-    return this->keys[distance-1];
+    return this->keys[distance - 1];
 }
 
 // deallocate all children
@@ -162,14 +168,14 @@ vector<DataEntry> InnerNode::rangeFind(const Key& begin, const Key& end) const {
     
     unsigned int count = 0;
     while (keys.size() > count && keys.at(count) <= begin)
-        count++;
+    count++;
     
     return children.at(count)->rangeFind(begin, end);
 }
 
 void InnerNode::updateKey(const TreeNode* rightDescendant, const Key& newKey) {
     // TO DO: implement this function
-    auto i = std::find(this->children.begin(),this->children.end(),rightDescendant);
+    auto i = std::find(this->children.begin(), this->children.end(), rightDescendant);
     unsigned long index = std::distance(this->children.begin(), i) - 1;
     this->keys[index] = newKey;
 }
@@ -216,11 +222,11 @@ void InnerNode::deleteEntry(const DataEntry& entryToRemove) {
     Key getRemovalKey = Key(entryToRemove);
     
     unsigned int i = 0;
-    while(i < keys.size() && getRemovalKey >= keys[i]){
+    while (i < keys.size() && getRemovalKey >= keys[i]) {
         ++i;
     }
     
-    children[i] -> deleteEntry(entryToRemove);
+    children[i]->deleteEntry(entryToRemove);
 }
 
 void InnerNode::insertChild(TreeNode* newChild, const Key& key) {
@@ -234,21 +240,21 @@ void InnerNode::insertChild(TreeNode* newChild, const Key& key) {
     children.insert(i, newChild);
     
     //check if we need to split inner node
-    if (keys.size() > 2*kInnerOrder) {
+    if (keys.size() > 2 * kInnerOrder) {
         
         auto middle = kInnerOrder + keys.begin();
         Key newParentValue = *middle;
         
-        TreeNode* childone = children[kInnerOrder+1];
-        Key keyone = keys[kInnerOrder+1];
-        TreeNode* childtwo = children[kInnerOrder+2];
+        TreeNode* childone = children[kInnerOrder + 1];
+        Key keyone = keys[kInnerOrder + 1];
+        TreeNode* childtwo = children[kInnerOrder + 2];
         InnerNode* keytwo = getParent();
         InnerNode *innerNodeIn = new InnerNode(childone, keyone, childtwo, keytwo);
         unsigned int begin = kInnerOrder + 2;
-        unsigned int end = kInnerOrder*2;
+        unsigned int end = kInnerOrder * 2;
         
         for (unsigned int i = begin; i <= end; i++) {
-            innerNodeIn->children.push_back(children[i+1]);
+            innerNodeIn->children.push_back(children[i + 1]);
             innerNodeIn->keys.push_back(keys[i]);
             innerNodeIn->children.back()->updateParent(innerNodeIn);
         }
@@ -271,120 +277,120 @@ void InnerNode::deleteChild(TreeNode* childToRemove) {
     
     // TO DO: implement this function
     
-    InnerNode* rightSibling = getSibling(this,'R');
-    InnerNode* leftSibling = getSibling(this,'L');
-
-    if(this->getParent() != nullptr){
-        for(unsigned int i = 0; i < children.size(); ++i){
-            if(children[i] == childToRemove){
+    InnerNode* rightSibling = getSibling(this, 'R');
+    InnerNode* leftSibling = getSibling(this, 'L');
+    
+    if (this->getParent() != nullptr) {
+        for (unsigned int i = 0; i < children.size(); ++i) {
+            if (children[i] == childToRemove) {
                 children.erase(children.begin() + i);
             }
         }
-        if(this->children.size() == kLeafOrder){
+        if (this->children.size() == kLeafOrder) {
             //first try borrowing leafNode from right sibling
-            if(this->getParent() != nullptr && rightSibling != nullptr && rightSibling->keys.size() > kLeafOrder){
+            if (this->getParent() != nullptr && rightSibling != nullptr && rightSibling->keys.size() > kLeafOrder) {
                 //Borrow one child over
                 this->children.push_back(rightSibling->children[0]);
                 rightSibling->children.erase(rightSibling->children.begin());
                 
                 //pull key of parent into this
                 Key thisKey = findRightKey(this);
-                this->updateKey(this->children[kLeafOrder],thisKey);
+                this->updateKey(this->children[kLeafOrder], thisKey);
                 
                 //update keys of right sibling
                 Key parentNewKey = rightSibling->keys[0];
                 rightSibling->keys.erase(rightSibling->keys.begin());
-
+                
                 
                 //update key of parent
-                this->getParent()->updateKey(rightSibling,parentNewKey);
+                this->getParent()->updateKey(rightSibling, parentNewKey);
             }
             //try borrowing leafNode from left sibling
             //problem
-            else if(this->getParent() != nullptr &&  leftSibling != nullptr && leftSibling->keys.size() > kLeafOrder){
+            else if (this->getParent() != nullptr &&  leftSibling != nullptr && leftSibling->keys.size() > kLeafOrder) {
                 //Borrow one child over
                 //insert to front
-                this->children.insert(this->children.begin(),leftSibling->children[leftSibling->children.size()-1]);
+                this->children.insert(this->children.begin(), leftSibling->children[leftSibling->children.size() - 1]);
                 
-                leftSibling->children[leftSibling->children.size()-1]->updateParent(this);
+                leftSibling->children[leftSibling->children.size() - 1]->updateParent(this);
                 leftSibling->children.pop_back();
                 
                 
                 //pull key from our parent
-                this->updateKey(this->children[1],findRightKey(this));
+                this->updateKey(this->children[1], findRightKey(this));
                 
                 //update keys of left sibling
-                Key parentKeysBack = leftSibling->keys[leftSibling->keys.size()-1];
+                Key parentKeysBack = leftSibling->keys[leftSibling->keys.size() - 1];
                 leftSibling->keys.pop_back();
                 
                 //update key of parent
-                this->getParent()->updateKey(this,parentKeysBack);
+                this->getParent()->updateKey(this, parentKeysBack);
             }
             //try merging with right
-            else if(rightSibling != nullptr && rightSibling->keys.size() == kLeafOrder){
-                for(unsigned int i = 0; i < rightSibling->children.size(); ++i){
+            else if (rightSibling != nullptr && rightSibling->keys.size() == kLeafOrder) {
+                for (unsigned int i = 0; i < rightSibling->children.size(); ++i) {
                     rightSibling->children[i]->updateParent(this);
                     this->children.push_back(rightSibling->children[i]);
                 }
-                for(unsigned int i = 0; i < kLeafOrder; ++i){
+                for (unsigned int i = 0; i < kLeafOrder; ++i) {
                     this->keys.push_back(0);
                 }
-                for(unsigned int i = 0; i < kLeafOrder+1; ++i){
-                    int index = kLeafOrder-1+i;
-                    this->keys[kLeafOrder-1+i] = this->children[kLeafOrder+i]->minKey();
+                for (unsigned int i = 0; i < kLeafOrder + 1; ++i) {
+                    //int index = kLeafOrder - 1 + i;
+                    this->keys[kLeafOrder - 1 + i] = this->children[kLeafOrder + i]->minKey();
                 }
-                for(unsigned int i = 0; i < rightSibling->children.size(); ++i){
+                for (unsigned int i = 0; i < rightSibling->children.size(); ++i) {
                     rightSibling->children.pop_back();
-                }
-                if(this->getParent()->children.size() > kLeafOrder){
-                    //updateKeys
-                    Key deleteKey = findSiblingKey(this,'R');
-                    this->getParent()->keys.erase(remove(keys.begin(),keys.end(),deleteKey),keys.end()); //not right
-                }
-                else{
+                }/*
+                  if (this->getParent()->children.size() > kLeafOrder) {
+                  //updateKeys
+                  Key deleteKey = findSiblingKey(this, 'R');
+                  this->getParent()->keys.erase(remove(keys.begin(), keys.end(), deleteKey), keys.end()); //not right
+                  }*/
+                if (this->getParent()->children.size() <= kLeafOrder) {
                     this->updateParent(this->getParent()->getParent());
                     //delete this->getParent();
                 }
-                this->getParent()->children.erase(remove(this->getParent()->children.begin(),this->getParent()->children.end(),rightSibling),this->getParent()->children.end());
+                this->getParent()->children.erase(remove(this->getParent()->children.begin(), this->getParent()->children.end(), rightSibling), this->getParent()->children.end());
                 
             }
             //try merging with left
-            else if(leftSibling != nullptr && leftSibling->keys.size() == kLeafOrder){
-                for(unsigned int i = 0; i < this->children.size(); ++i){
+            else if (leftSibling != nullptr && leftSibling->keys.size() == kLeafOrder) {
+                for (unsigned int i = 0; i < this->children.size(); ++i) {
                     this->children[i]->updateParent(leftSibling);
                     leftSibling->children.push_back(this->children[i]);
                 }
-                for(unsigned int i = 0; i < this->children.size(); ++i){
+                for (unsigned int i = 0; i < this->children.size(); ++i) {
                     this->children.pop_back();
                 }
                 //update key
                 //check over
-                for(unsigned int i = 0; i < kLeafOrder; ++i){
-                    int index = i + kLeafOrder + 1;
-                    leftSibling->keys.push_back(leftSibling->children[i+kLeafOrder+1]->minKey());
+                for (unsigned int i = 0; i < kLeafOrder; ++i) {
+                    //int index = i + kLeafOrder + 1;
+                    leftSibling->keys.push_back(leftSibling->children[i + kLeafOrder + 1]->minKey());
                 }
-                if(this->getParent()->children.size() > kLeafOrder+1){
+                if (this->getParent()->children.size() > kLeafOrder + 1) {
                     //updateKeys
-                    Key deleteKey = findSiblingKey(this,'L');
-                    this->getParent()->keys.erase(remove(keys.begin(),keys.end(),deleteKey),keys.end());
+                    Key deleteKey = findSiblingKey(this, 'L');
+                    this->getParent()->keys.erase(remove(this->getParent()->keys.begin(), this->getParent()->keys.end(), deleteKey), this->getParent()->keys.end());
                 }
-                else{
+                else {
                     leftSibling->updateParent(this->getParent()->getParent());
                 }
-                this->getParent()->children.erase(remove(this->getParent()->children.begin(),this->getParent()->children.end(),this)
-                                                  ,this->getParent()->children.end());
+                this->getParent()->children.erase(remove(this->getParent()->children.begin(), this->getParent()->children.end(), this)
+                                                  , this->getParent()->children.end());
             }
-            else{
-                this->getParent()->children.erase(remove(this->getParent()->children.begin(),this->getParent()->children.end(),this), this->getParent()->children.end());
-                this->getParent()->keys.erase(remove(this->getParent()->keys.begin(),this->getParent()->keys.end(),findRightKey(this)),
+            else {
+                this->getParent()->children.erase(remove(this->getParent()->children.begin(), this->getParent()->children.end(), this), this->getParent()->children.end());
+                this->getParent()->keys.erase(remove(this->getParent()->keys.begin(), this->getParent()->keys.end(), findRightKey(this)),
                                               this->getParent()->keys.end());
             }
         }
         //give our children over to our left
-        else{
+        else {
             //put parent's key into left sibling
             Key thisKey = findRightKey(this);
-            leftSibling->updateKey(leftSibling->children[kLeafOrder],thisKey);
+            leftSibling->updateKey(leftSibling->children[kLeafOrder], thisKey);
             
             //put this' key into parent
             Key parentNewKey = this->keys[0];
@@ -392,15 +398,15 @@ void InnerNode::deleteChild(TreeNode* childToRemove) {
             
             
             //update key of parent
-            this->getParent()->updateKey(this,parentNewKey);
+            this->getParent()->updateKey(this, parentNewKey);
         }
     }
-    else{
-        auto i = std::find(this->children.begin(),this->children.end(),childToRemove);
+    else {
+        auto i = std::find(this->children.begin(), this->children.end(), childToRemove);
         unsigned long distance = std::distance(this->children.begin(), i);
         this->children.erase(children.begin() + distance);
-        if(distance > 0){
-            this->keys.erase(this->keys.begin() + (distance-1));
+        if (distance > 0) {
+            this->keys.erase(this->keys.begin() + (distance - 1));
         }
     }
 }

@@ -129,7 +129,12 @@ public:
     Key findRightKey(LeafNode* leafNodeIn);
     
     Key findSiblingKey(InnerNode* innerNodeIn, char direction);
-        
+    
+    std::vector<TreeNode*> getChildren(){
+        return children;
+    }
+    
+    
 private:
     std::vector<Key> keys;
     std::vector<TreeNode*> children;

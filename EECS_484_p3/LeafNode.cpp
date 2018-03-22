@@ -199,8 +199,19 @@ void LeafNode::deleteEntry(const DataEntry& entryToRemove) {
             }
             
             //????
-            if(this->getParent() != nullptr && this->getParent()->findRightKey(this) >= Key(entryToRemove)){
-                this->getParent()->updateKey(this->rightNeighbor,this->rightNeighbor->minKey());
+            //if(this->getParent() != nullptr && this->getParent()->findRightKey(this) >= Key(entryToRemove)){
+            //    this->getParent()->updateKey(this->rightNeighbor,this->rightNeighbor->minKey());
+            //}
+            
+            //update common ancestor if borrowed from non-sibling
+            if(this->getCommonAncestor(this->rightNeighbor) != this->getParent()){
+                TreeNode* position = nullptr;
+                for(unsigned long i = 0; i < this->getCommonAncestor(this->rightNeighbor)->getChildren().size(); ++i){
+                    if(this->getCommonAncestor(this->rightNeighbor)->getChildren()[i]->contains(this->rightNeighbor)){
+                        position = this->getCommonAncestor(this->rightNeighbor)->getChildren()[i];
+                    }
+                }
+                this->getCommonAncestor(this->rightNeighbor)->updateKey(position,this->rightNeighbor->minKey());
             }
         }
         //check if we can borrow from left
@@ -216,6 +227,17 @@ void LeafNode::deleteEntry(const DataEntry& entryToRemove) {
             
             if(this->getParent() != nullptr){
                 this->getParent()->updateKey(this,this->minKey());
+            }
+            
+            //update common ancestor
+            if(this->getCommonAncestor(this->leftNeighbor) != this->getParent()){
+                TreeNode* position = nullptr;
+                for(unsigned long i = 0; i < this->getCommonAncestor(this->leftNeighbor)->getChildren().size(); ++i){
+                    if(this->getCommonAncestor(this->leftNeighbor)->getChildren()[i]->contains(this)){
+                        position = this->getCommonAncestor(this->leftNeighbor)->getChildren()[i];
+                    }
+                }
+                this->getCommonAncestor(this->leftNeighbor)->updateKey(position,this->minKey());
             }
         }
         //NEED to reset neighbors during merging
