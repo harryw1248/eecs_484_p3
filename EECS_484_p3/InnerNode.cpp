@@ -271,8 +271,8 @@ void InnerNode::deleteChild(TreeNode* childToRemove) {
     
     // TO DO: implement this function
     
-    InnerNode* rightSibling = getSibling(this,'R');
-    InnerNode* leftSibling = getSibling(this,'L');
+    //InnerNode* rightSibling = getSibling(this,'R');
+    //InnerNode* leftSibling = getSibling(this,'L');
 
     if(this->getParent() != nullptr){
         for(unsigned int i = 0; i < children.size(); ++i){
