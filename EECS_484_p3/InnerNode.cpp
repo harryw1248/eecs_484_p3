@@ -271,8 +271,8 @@ void InnerNode::deleteChild(TreeNode* childToRemove) {
     
     // TO DO: implement this function
     
-    //InnerNode* rightSibling = getSibling(this,'R');
-    //InnerNode* leftSibling = getSibling(this,'L');
+    InnerNode* rightSibling = getSibling(this,'R');
+    InnerNode* leftSibling = getSibling(this,'L');
 
     if(this->getParent() != nullptr){
         for(unsigned int i = 0; i < children.size(); ++i){
@@ -282,36 +282,36 @@ void InnerNode::deleteChild(TreeNode* childToRemove) {
         }
         if(this->children.size() == kLeafOrder){
             //first try borrowing leafNode from right sibling
-            if(this->getParent() != nullptr && getSibling(this,'R') != nullptr && getSibling(this,'R')->keys.size() > kLeafOrder){
+            if(this->getParent() != nullptr && rightSibling != nullptr && rightSibling->keys.size() > kLeafOrder){
                 //Borrow one child over
-                this->children.push_back(getSibling(this,'R')->children[0]);
-                getSibling(this,'R')->children.erase(getSibling(this,'R')->children.begin());
+                this->children.push_back(rightSibling->children[0]);
+                rightSibling->children.erase(rightSibling->children.begin());
                 
                 //pull key of parent into this
                 Key thisKey = findRightKey(this);
                 this->updateKey(this->children[kLeafOrder],thisKey);
                 
                 //update keys of right sibling
-                Key parentNewKey = getSibling(this,'R')->keys[0];
-                getSibling(this,'R')->keys.erase(getSibling(this,'R')->keys.begin());
+                Key parentNewKey = rightSibling->keys[0];
+                rightSibling->keys.erase(rightSibling->keys.begin());
 
                 
                 //update key of parent
-                this->getParent()->updateKey(getSibling(this,'R'),parentNewKey);
+                this->getParent()->updateKey(rightSibling,parentNewKey);
             }
             //try borrowing leafNode from left sibling
             //problem
-            else if(this->getParent() != nullptr &&  getSibling(this,'L') != nullptr && getSibling(this,'L')->keys.size() > kLeafOrder){
+            else if(this->getParent() != nullptr &&  leftSibling != nullptr && leftSibling->keys.size() > kLeafOrder){
                 //Borrow one child over
                 //insert to front
-                this->children.insert(this->children.begin(),getSibling(this,'L')->children[getSibling(this,'L')->children.size()-1]);
+                this->children.insert(this->children.begin(),leftSibling->children[leftSibling->children.size()-1]);
                 
-                //this->children.push_back(getSibling(this,'L')->children[getSibling(this,'L')->children.size()-1]);
+                //this->children.push_back(leftSibling->children[leftSibling->children.size()-1]);
                 //std::sort(this->children.begin(),this->children.end());
                 //this->children.pop_back();
                 
-                getSibling(this,'L')->children[getSibling(this,'L')->children.size()-1]->updateParent(this);
-                getSibling(this,'L')->children.pop_back();
+                leftSibling->children[leftSibling->children.size()-1]->updateParent(this);
+                leftSibling->children.pop_back();
                 
                 
                 //update key of this
@@ -321,29 +321,29 @@ void InnerNode::deleteChild(TreeNode* childToRemove) {
                 this->updateKey(this->children[1],findRightKey(this));
                 
                 //update keys of left sibling
-                Key parentKeysBack = getSibling(this,'L')->keys[getSibling(this,'L')->keys.size()-1];
-                getSibling(this,'L')->keys.pop_back();
+                Key parentKeysBack = leftSibling->keys[leftSibling->keys.size()-1];
+                leftSibling->keys.pop_back();
                 
                 //update key of parent
                 this->getParent()->updateKey(this,parentKeysBack);
             }
             //try merging with right
-            else if(getSibling(this,'R') != nullptr && getSibling(this,'R')->keys.size() == kLeafOrder){
-                for(unsigned int i = 0; i < getSibling(this,'R')->children.size(); ++i){
-                    getSibling(this,'R')->children[i]->updateParent(this);
-                    this->children.push_back(getSibling(this,'R')->children[i]);
+            else if(rightSibling != nullptr && rightSibling->keys.size() == kLeafOrder){
+                for(unsigned int i = 0; i < rightSibling->children.size(); ++i){
+                    rightSibling->children[i]->updateParent(this);
+                    this->children.push_back(rightSibling->children[i]);
                 }
                 for(unsigned int i = 0; i < kLeafOrder; ++i){
                     this->keys.push_back(0);
                 }
                 for(unsigned int i = 0; i < kLeafOrder+1; ++i){
                     int index = kLeafOrder-1+i;
-                    //this->getSibling(this,'L')->updateKey(this->getSibling(this,'L')->children[i+kLeafOrder+1],this->getSibling(this,'L')->children[i+kLeafOrder+1]->minKey());
+                    //this->leftSibling->updateKey(this->leftSibling->children[i+kLeafOrder+1],this->leftSibling->children[i+kLeafOrder+1]->minKey());
                     //this->keys.push_back(this->children[i+1]->minKey());
                     this->keys[kLeafOrder-1+i] = this->children[kLeafOrder+i]->minKey();
                 }
-                for(unsigned int i = 0; i < getSibling(this,'R')->children.size(); ++i){
-                    getSibling(this,'R')->children.pop_back();
+                for(unsigned int i = 0; i < rightSibling->children.size(); ++i){
+                    rightSibling->children.pop_back();
                 }
                 if(this->getParent()->children.size() > kLeafOrder){
                     //updateKeys
@@ -354,14 +354,14 @@ void InnerNode::deleteChild(TreeNode* childToRemove) {
                     this->updateParent(this->getParent()->getParent());
                     //delete this->getParent();
                 }
-                this->getParent()->children.erase(remove(this->getParent()->children.begin(),this->getParent()->children.end(),getSibling(this,'R')),this->getParent()->children.end());
+                this->getParent()->children.erase(remove(this->getParent()->children.begin(),this->getParent()->children.end(),rightSibling),this->getParent()->children.end());
                 
             }
             //try merging with left
-            else if(getSibling(this,'L') != nullptr && getSibling(this,'L')->keys.size() == kLeafOrder){
+            else if(leftSibling != nullptr && leftSibling->keys.size() == kLeafOrder){
                 for(unsigned int i = 0; i < this->children.size(); ++i){
-                    this->children[i]->updateParent(getSibling(this,'L'));
-                    getSibling(this,'L')->children.push_back(this->children[i]);
+                    this->children[i]->updateParent(leftSibling);
+                    leftSibling->children.push_back(this->children[i]);
                 }
                 for(unsigned int i = 0; i < this->children.size(); ++i){
                     this->children.pop_back();
@@ -370,17 +370,17 @@ void InnerNode::deleteChild(TreeNode* childToRemove) {
                 //check over
                 for(unsigned int i = 0; i < kLeafOrder; ++i){
                     int index = i + kLeafOrder + 1;
-                    //this->getSibling(this,'L')->updateKey(this->getSibling(this,'L')->children[i+kLeafOrder+1],this->getSibling(this,'L')->children[i+kLeafOrder+1]->minKey());
-                    this->getSibling(this,'L')->keys.push_back(this->getSibling(this,'L')->children[i+kLeafOrder+1]->minKey());
+                    //leftSibling->updateKey(leftSibling->children[i+kLeafOrder+1],this->leftSibling->children[i+kLeafOrder+1]->minKey());
+                    leftSibling->keys.push_back(leftSibling->children[i+kLeafOrder+1]->minKey());
                 }
-                //this->getSibling(this,'L')->keys.push_back(this->getSibling(this,'L')->minKey());
+                //leftSibling->keys.push_back(leftSibling->minKey());
                 if(this->getParent()->children.size() > kLeafOrder+1){
                     //updateKeys
                     Key deleteKey = findSiblingKey(this,'L');
                     this->getParent()->keys.erase(remove(keys.begin(),keys.end(),deleteKey),keys.end());
                 }
                 else{
-                    this->getSibling(this,'L')->updateParent(this->getParent()->getParent());
+                    leftSibling->updateParent(this->getParent()->getParent());
                 }
                 this->getParent()->children.erase(remove(this->getParent()->children.begin(),this->getParent()->children.end(),this)
                                                   ,this->getParent()->children.end());
@@ -395,7 +395,7 @@ void InnerNode::deleteChild(TreeNode* childToRemove) {
         else{
             //put parent's key into left sibling
             Key thisKey = findRightKey(this);
-            this->getSibling(this,'L')->updateKey(this->getSibling(this,'L')->children[kLeafOrder],thisKey);
+            leftSibling->updateKey(leftSibling->children[kLeafOrder],thisKey);
             
             //put this' key into parent
             Key parentNewKey = this->keys[0];
