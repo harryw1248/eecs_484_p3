@@ -130,6 +130,10 @@ public:
     
     Key findSiblingKey(InnerNode* innerNodeIn, char direction);
     
+    
+    //find the key to pull down into innernode after redistribution
+    Key findPullDownKey(InnerNode* innerNodeIn);
+    
     std::vector<TreeNode*> getChildren(){
         return children;
     }

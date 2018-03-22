@@ -7,8 +7,8 @@
 using Key = int;
 using Record = int;
 
-const constexpr size_t kLeafOrder = 1;              // order of leaf nodes, must be at least 1
-const constexpr size_t kInnerOrder = 1;             // order of inner nodes, must be at least 1
+const constexpr size_t kLeafOrder = 3;              // order of leaf nodes, must be at least 1
+const constexpr size_t kInnerOrder = 3;             // order of inner nodes, must be at least 1
 extern const char* kPrintPrefix;
 extern const int kIndentIncr;
 

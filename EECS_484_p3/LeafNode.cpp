@@ -218,7 +218,14 @@ void LeafNode::deleteEntry(const DataEntry& entryToRemove) {
         else if(this->leftNeighbor != nullptr && this->leftNeighbor->entries.size() > kLeafOrder){
             
             unsigned long sizeDifference = this->leftNeighbor->entries.size() - this->entries.size();
-            unsigned long numTransferred = sizeDifference/2;
+            unsigned long numTransferred = 0;
+            
+            if(sizeDifference % 2 == 1){
+                numTransferred = (sizeDifference/2)+1;
+            }
+            else{
+                numTransferred = sizeDifference/2;
+            }
             
             for(unsigned long i = 0; i < numTransferred; ++i){
                 this->entries.insert(this->entries.begin(),this->leftNeighbor->entries[this->leftNeighbor->entries.size()-1]);

@@ -83,7 +83,6 @@ Key InnerNode::findSiblingKey(InnerNode* innerNodeIn, char direction) {
     return innerNodeIn->getParent()->keys[keyDistance];
 }
 
-
 Key InnerNode::findRightKey(InnerNode* innerNodeIn) {
     InnerNode* parent = innerNodeIn->getParent();
     assert(parent != nullptr);
@@ -93,6 +92,14 @@ Key InnerNode::findRightKey(InnerNode* innerNodeIn) {
         return parent->keys[0];
     }
     return parent->keys[distance - 1];
+}
+
+Key InnerNode::findPullDownKey(InnerNode* innerNodeIn) {
+    InnerNode* parent = innerNodeIn->getParent();
+    assert(parent != nullptr);
+    auto i = find(parent->children.begin(), parent->children.end(), innerNodeIn);
+    unsigned long distance = std::distance(parent->children.begin(), i);
+    return parent->keys[distance];
 }
 
 Key InnerNode::findRightKey(LeafNode* leafNodeIn) {
@@ -286,45 +293,65 @@ void InnerNode::deleteChild(TreeNode* childToRemove) {
                 children.erase(children.begin() + i);
             }
         }
+        //check for 4 cases
         if (this->children.size() == kLeafOrder) {
             //first try borrowing leafNode from right sibling
             if (this->getParent() != nullptr && rightSibling != nullptr && rightSibling->keys.size() > kLeafOrder) {
-                //Borrow one child over
-                this->children.push_back(rightSibling->children[0]);
-                rightSibling->children.erase(rightSibling->children.begin());
                 
-                //pull key of parent into this
-                Key thisKey = findRightKey(this);
-                this->updateKey(this->children[kLeafOrder], thisKey);
+                unsigned long sizeDifference = rightSibling->keys.size() - this->keys.size();
+                unsigned long numTransferred = sizeDifference/2;
                 
-                //update keys of right sibling
-                Key parentNewKey = rightSibling->keys[0];
-                rightSibling->keys.erase(rightSibling->keys.begin());
+                for(unsigned long i = 0; i < numTransferred; ++i){
+                    this->children.push_back(rightSibling->children[0]);
+                    rightSibling->children[0]->updateParent(this);
+                    rightSibling->children.erase(rightSibling->children.begin());
+                }
                 
-                
-                //update key of parent
-                this->getParent()->updateKey(rightSibling, parentNewKey);
+                for(unsigned long i = 0; i < numTransferred; ++i){
+                    //pull down key of parent into this
+                    Key pulledDownKey = findPullDownKey(this);
+                    this->updateKey(this->children[kLeafOrder+i], pulledDownKey);
+                    
+                    //push right sibling's key into parent
+                    Key pushedUpKey = rightSibling->keys[0];
+                    this->getParent()->updateKey(rightSibling, pushedUpKey);
+                    
+                    //erase right sibling's key
+                    rightSibling->keys.erase(rightSibling->keys.begin());
+                }
             }
             //try borrowing leafNode from left sibling
             //problem
             else if (this->getParent() != nullptr &&  leftSibling != nullptr && leftSibling->keys.size() > kLeafOrder) {
-                //Borrow one child over
-                //insert to front
-                this->children.insert(this->children.begin(), leftSibling->children[leftSibling->children.size() - 1]);
                 
-                leftSibling->children[leftSibling->children.size() - 1]->updateParent(this);
-                leftSibling->children.pop_back();
+                unsigned long sizeDifference = leftSibling->children.size() - this->children.size();
+                unsigned long numTransferred = 0;
                 
+                if(sizeDifference % 2 == 1){
+                    numTransferred = (sizeDifference/2)+1;
+                }
+                else{
+                    numTransferred = sizeDifference/2;
+                }
                 
-                //pull key from our parent
-                this->updateKey(this->children[1], findRightKey(this));
+                for(unsigned long i = 0; i < numTransferred; ++i){
+                    this->children.insert(this->children.begin(), leftSibling->children[leftSibling->children.size() - 1]);
+                    leftSibling->children[leftSibling->children.size() - 1]->updateParent(this);
+                    leftSibling->children.pop_back();
+                }
                 
-                //update keys of left sibling
-                Key parentKeysBack = leftSibling->keys[leftSibling->keys.size() - 1];
-                leftSibling->keys.pop_back();
-                
-                //update key of parent
-                this->getParent()->updateKey(this, parentKeysBack);
+                for(unsigned long i = 0; i < numTransferred; ++i){
+                    //pull down key of parent into this
+                    Key pulledDownKey = findPullDownKey(leftSibling);
+                    this->updateKey(this->children[i+1], pulledDownKey);
+                    
+                    //push left sibling's key into parent
+                    Key pushedUpKey = leftSibling->keys[leftSibling->keys.size()-1];
+                    this->getParent()->updateKey(this, pushedUpKey);
+                    
+                    //erase left sibling's key
+                    leftSibling->keys.pop_back();
+                }
             }
             //try merging with right
             else if (rightSibling != nullptr && rightSibling->keys.size() == kLeafOrder) {
