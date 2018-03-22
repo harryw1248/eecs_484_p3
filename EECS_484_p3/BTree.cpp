@@ -62,7 +62,7 @@ void BTree::deleteEntry(const DataEntry& entryToRemove) {
 
 vector<DataEntry> BTree::rangeFind(const Key& begin, const Key& end) const {
     // TO DO: implement this function
-    return vector<DataEntry>{};
+    return root->rangeFind(begin, end);
 }
 
 // print tree

@@ -92,18 +92,17 @@ vector<DataEntry> LeafNode::rangeFind(const Key& begin, const Key& end) const {
     auto leaf = this;
     vector<DataEntry> vec;
     while (leaf) {
-        for (auto& idx : this->entries) {
+        for (auto& idx : leaf->entries) {
             Key key = Key(idx);
             
-            if (key >= begin && end >= key)
+            if (key >= begin && end >= key){
                 vec.push_back(idx);
-            if (end <= key)
+            }
+            if (end <= key){
                 return vec;
+            }
         }
-        
-        leaf = this->rightNeighbor;
     }
-    
     return vec;
 }
 
