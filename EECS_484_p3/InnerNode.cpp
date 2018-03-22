@@ -306,16 +306,9 @@ void InnerNode::deleteChild(TreeNode* childToRemove) {
                 //insert to front
                 this->children.insert(this->children.begin(),leftSibling->children[leftSibling->children.size()-1]);
                 
-                //this->children.push_back(leftSibling->children[leftSibling->children.size()-1]);
-                //std::sort(this->children.begin(),this->children.end());
-                //this->children.pop_back();
-                
                 leftSibling->children[leftSibling->children.size()-1]->updateParent(this);
                 leftSibling->children.pop_back();
                 
-                
-                //update key of this
-                //push key to front
                 
                 //pull key from our parent
                 this->updateKey(this->children[1],findRightKey(this));
@@ -338,8 +331,6 @@ void InnerNode::deleteChild(TreeNode* childToRemove) {
                 }
                 for(unsigned int i = 0; i < kLeafOrder+1; ++i){
                     int index = kLeafOrder-1+i;
-                    //this->leftSibling->updateKey(this->leftSibling->children[i+kLeafOrder+1],this->leftSibling->children[i+kLeafOrder+1]->minKey());
-                    //this->keys.push_back(this->children[i+1]->minKey());
                     this->keys[kLeafOrder-1+i] = this->children[kLeafOrder+i]->minKey();
                 }
                 for(unsigned int i = 0; i < rightSibling->children.size(); ++i){
@@ -370,10 +361,8 @@ void InnerNode::deleteChild(TreeNode* childToRemove) {
                 //check over
                 for(unsigned int i = 0; i < kLeafOrder; ++i){
                     int index = i + kLeafOrder + 1;
-                    //leftSibling->updateKey(leftSibling->children[i+kLeafOrder+1],this->leftSibling->children[i+kLeafOrder+1]->minKey());
                     leftSibling->keys.push_back(leftSibling->children[i+kLeafOrder+1]->minKey());
                 }
-                //leftSibling->keys.push_back(leftSibling->minKey());
                 if(this->getParent()->children.size() > kLeafOrder+1){
                     //updateKeys
                     Key deleteKey = findSiblingKey(this,'L');

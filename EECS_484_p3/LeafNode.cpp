@@ -190,16 +190,30 @@ void LeafNode::deleteEntry(const DataEntry& entryToRemove) {
         
         //check if we can borrow from right
         if(this->rightNeighbor != nullptr && this->rightNeighbor->entries.size() > kLeafOrder){
-            this->entries.push_back(this->rightNeighbor->entries[0]);
-            this->rightNeighbor->entries.erase(this->rightNeighbor->entries.begin());
+            
+            unsigned long sizeDifference = this->rightNeighbor->entries.size() - this->entries.size();
+            unsigned long numTransferred = sizeDifference/2;
+            for(unsigned long i = 0; i < numTransferred; ++i){
+                this->entries.push_back(this->rightNeighbor->entries[0]);
+                this->rightNeighbor->entries.erase(this->rightNeighbor->entries.begin());
+            }
+            
+            //????
             if(this->getParent() != nullptr && this->getParent()->findRightKey(this) >= Key(entryToRemove)){
                 this->getParent()->updateKey(this->rightNeighbor,this->rightNeighbor->minKey());
             }
         }
         //check if we can borrow from left
         else if(this->leftNeighbor != nullptr && this->leftNeighbor->entries.size() > kLeafOrder){
-            this->entries.insert(this->entries.begin(),this->leftNeighbor->entries[this->leftNeighbor->entries.size()-1]);
-            this->leftNeighbor->entries.pop_back();
+            
+            unsigned long sizeDifference = this->rightNeighbor->entries.size() - this->entries.size();
+            unsigned long numTransferred = sizeDifference/2;
+            
+            for(unsigned long i = 0; i < numTransferred; ++i){
+                this->entries.insert(this->entries.begin(),this->leftNeighbor->entries[this->leftNeighbor->entries.size()-1]);
+                this->leftNeighbor->entries.pop_back();
+            }
+            
             if(this->getParent() != nullptr){
                 this->getParent()->updateKey(this,this->minKey());
             }
