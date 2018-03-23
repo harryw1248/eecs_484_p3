@@ -392,6 +392,7 @@ void InnerNode::merger() {
         
         //pull key from parent
         this->keys.push_back(sibling->getKey());
+        
         //check if key of this has to be updated
         if(this->children[this->keys.size()-1]->minKey() < this->keys[keys.size()-1] ){
         }
@@ -415,15 +416,14 @@ void InnerNode::merger() {
             sibling->keys.erase(sibling->keys.begin());
         }
         else{
-            //auto newParent = this->getParent()->getParent();
             
             //testing below block of code
-            if(this->getParent()->children.size() > kLeafOrder+1){
-                //this->getParent()->keys.erase(keys.begin()+posInParent);
-            }
-            else{
-                this->getParent()->keys.erase(this->getParent()->keys.begin()+keyInParentPos);
-            }
+            //if(this->getParent()->children.size() > kInnerOrder+1){
+            //    //this->getParent()->keys.erase(keys.begin()+posInParent);
+            //}
+            //else{
+             //   this->getParent()->keys.erase(this->getParent()->keys.begin()+keyInParentPos);
+            //}
             
             //this->getParent()->keys.erase(this->getParent()->keys.begin()+keyInParentPos);
             if(this->getParent() != nullptr){
@@ -432,12 +432,6 @@ void InnerNode::merger() {
             else{
                 delete sibling;
             }
-            //this->getParent()->keys.erase(this->getParent()->keys.begin()+keyInParentPos);
-            //this->getParent()->children.erase(this->getParent()->children.begin()+keyInParentPos+1);
-//            if(this->getParent() !=nullptr && this->getParent()->keys.size() < kLeafOrder){
-//                this->getParent()->merger();
-//            }
-            //this->updateParent(newParent);
             return;
         }
         
