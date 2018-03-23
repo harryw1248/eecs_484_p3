@@ -202,12 +202,16 @@ void LeafNode::deleteEntry(const DataEntry& entryToRemove) {
             //update common ancestor if borrowed from non-sibling
             if(this->getCommonAncestor(this->rightNeighbor) != this->getParent()){
                 TreeNode* position = nullptr;
-                for(unsigned long i = 0; i < this->getCommonAncestor(this->rightNeighbor)->getChildren().size(); ++i){
-                    if(this->getCommonAncestor(this->rightNeighbor)->getChildren()[i]->contains(this->rightNeighbor)){
-                        position = this->getCommonAncestor(this->rightNeighbor)->getChildren()[i];
+                InnerNode* commonAncestor = this->getCommonAncestor(this->rightNeighbor);
+                Key updateKey = 0;
+                
+                for(unsigned long i = 0; i < commonAncestor->getChildren().size(); ++i){
+                    if(commonAncestor->getChildren()[i]->contains(this->rightNeighbor)){
+                        position = commonAncestor->getChildren()[i];
+                        updateKey = commonAncestor->getChildren()[i]->minKey();
                     }
                 }
-                this->getCommonAncestor(this->rightNeighbor)->updateKey(position,this->rightNeighbor->minKey());
+                commonAncestor->updateKey(position,updateKey);
             }
             this->getParent()->updateKey(this->rightNeighbor,this->rightNeighbor->minKey());
         }
@@ -232,12 +236,16 @@ void LeafNode::deleteEntry(const DataEntry& entryToRemove) {
             //update common ancestor if borrowed from non-sibling
             if(this->getCommonAncestor(this->leftNeighbor) != this->getParent()){
                 TreeNode* position = nullptr;
-                for(unsigned long i = 0; i < this->getCommonAncestor(this->leftNeighbor)->getChildren().size(); ++i){
-                    if(this->getCommonAncestor(this->leftNeighbor)->getChildren()[i]->contains(this)){
-                        position = this->getCommonAncestor(this->leftNeighbor)->getChildren()[i];
+                InnerNode* commonAncestor = this->getCommonAncestor(this->leftNeighbor);
+                Key updateKey = 0;
+
+                for(unsigned long i = 0; i < commonAncestor->getChildren().size(); ++i){
+                    if(commonAncestor->getChildren()[i]->contains(this)){
+                        position = commonAncestor->getChildren()[i];
+                        updateKey = commonAncestor->getChildren()[i]->minKey();
                     }
                 }
-                this->getCommonAncestor(this->leftNeighbor)->updateKey(position,this->minKey());
+                commonAncestor->updateKey(position,updateKey);
             }
             this->getParent()->updateKey(this,this->minKey());
         }
@@ -256,8 +264,20 @@ void LeafNode::deleteEntry(const DataEntry& entryToRemove) {
             
             //if pulling from a non-sibling
             if(this->getCommonAncestor(this->rightNeighbor) != this->getParent()){
-                this->getParent()->getSibling(this->getParent(),'R')->deleteChild(this->rightNeighbor);
+                TreeNode* position = nullptr;
+                InnerNode* commonAncestor = this->getCommonAncestor(this->rightNeighbor);
+                Key updateKey = 0;
+                
+                for(unsigned long i = 0; i < commonAncestor->getChildren().size(); ++i){
+                    if(commonAncestor->getChildren()[i]->contains(this->rightNeighbor)){
+                        position = commonAncestor->getChildren()[i];
+                        updateKey = commonAncestor->getChildren()[i]->minKey();
+                    }
+                }
+                commonAncestor->updateKey(position,updateKey);
+                this->rightNeighbor->getParent()->deleteChild(this->rightNeighbor);
             }
+            
             //if pulling from a sibling
             else{
                 this->getParent()->deleteChild(this->rightNeighbor);
