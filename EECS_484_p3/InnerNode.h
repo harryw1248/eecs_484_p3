@@ -127,9 +127,7 @@ public:
     
     Key findRightKey(InnerNode* innerNodeIn);
     Key findRightKey(LeafNode* leafNodeIn);
-    
-    Key findSiblingKey(InnerNode* innerNodeIn, char direction);
-    
+
     
     //find the key to pull down into innernode after redistribution
     Key findPullDownKey(InnerNode* innerNodeIn);

@@ -88,7 +88,6 @@
 				08C3F7C9205089F600A233DC /* DataEntry.cpp */,
 				08C3F7CA205089F600A233DC /* DataEntry.h */,
 				08C3F7CB205089F600A233DC /* InnerNode.cpp */,
-				083585F02064ACB20072E54E /* tester.py */,
 				08C3F7CC205089F600A233DC /* InnerNode.h */,
 				08C3F7CD205089F600A233DC /* LeafNode.cpp */,
 				08C3F7CE205089F600A233DC /* LeafNode.h */,
@@ -99,6 +98,7 @@
 				08C3F7D3205089F600A233DC /* Utilities.cpp */,
 				08C3F7D4205089F600A233DC /* Utilities.h */,
 				0870C4832059ABD600642731 /* test1_insert.txt */,
+				083585F02064ACB20072E54E /* tester.py */,
 			);
 			path = EECS_484_p3;
 			sourceTree = "<group>";
