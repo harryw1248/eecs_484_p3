@@ -455,7 +455,7 @@ void InnerNode::merger() {
             
             //testing below block of code
             if(this->getParent()->children.size() > kLeafOrder+1){
-                this->getParent()->updateKey(sibling->getSibling(sibling,'R'),sibling->getSibling(sibling,'R')->minKey());
+                //this->getParent()->keys.erase(keys.begin()+posInParent);
             }
             else{
                 this->getParent()->keys.erase(this->getParent()->keys.begin()+keyInParentPos);
