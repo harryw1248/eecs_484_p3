@@ -139,9 +139,13 @@ public:
     }
     
     
+    
+    
 private:
     std::vector<Key> keys;
     std::vector<TreeNode*> children;
+    Key getKey();
+    void merger();
 };
 
 #endif
