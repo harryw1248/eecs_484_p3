@@ -185,9 +185,9 @@ void LeafNode::deleteEntry(const DataEntry& entryToRemove) {
     
     assert(this->contains(entryToRemove));
     
-    if(this->entries.size() == kLeafOrder && this->getParent() != nullptr){
-        auto i = std::lower_bound(this->entries.begin(),this->entries.end(),entryToRemove);
-        entries.erase(i);
+    auto i = std::lower_bound(this->entries.begin(),this->entries.end(),entryToRemove);
+    entries.erase(i);
+    if(this->entries.size() < kLeafOrder && this->getParent() != nullptr){
         
         //check if we can borrow from right
         if(this->rightNeighbor != nullptr && this->rightNeighbor->entries.size() > kLeafOrder){
@@ -276,9 +276,5 @@ void LeafNode::deleteEntry(const DataEntry& entryToRemove) {
             }
             this->getParent()->deleteChild(this);
         }
-    }
-    else{
-        auto i = std::lower_bound(this->entries.begin(),this->entries.end(),entryToRemove);
-        entries.erase(i);
     }
 }
