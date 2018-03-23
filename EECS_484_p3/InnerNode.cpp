@@ -282,18 +282,18 @@ void InnerNode::deleteChild(TreeNode* childToRemove) {
         }
     }
     
+    if (distance > 0) {
+        unsigned long deletePos = distance - 1;
+        this->keys.erase(this->keys.begin() + deletePos);
+    }
+    else {
+        this->keys.erase(this->keys.begin());
+    }
+    
     //check for 4 cases
     if (this->keys.size() < kInnerOrder) {
         //first try borrowing leafNode from right sibling
         if (this->getParent() != nullptr && rightSibling != nullptr && rightSibling->keys.size() > kInnerOrder) {
-            
-            if (distance > 0) {
-                unsigned long deletePos = distance - 1;
-                this->keys.erase(this->keys.begin() + deletePos);
-            }
-            else {
-                this->keys.erase(this->keys.begin());
-            }
             
             unsigned long sizeDifference = rightSibling->keys.size() - this->keys.size();
             unsigned long numTransferred = sizeDifference / 2;
@@ -325,15 +325,6 @@ void InnerNode::deleteChild(TreeNode* childToRemove) {
         //try borrowing leafNode from left sibling
         //problem
         else if (this->getParent() != nullptr &&  leftSibling != nullptr && leftSibling->keys.size() > kInnerOrder) {
-            
-            if (distance > 0) {
-                unsigned long deletePos = distance - 1;
-                this->keys.erase(this->keys.begin() + deletePos);
-            }
-            else {
-                this->keys.erase(this->keys.begin());
-            }
-            
             
             unsigned long sizeDifference = leftSibling->children.size() - this->children.size();
             unsigned long numTransferred = 0;
@@ -370,38 +361,11 @@ void InnerNode::deleteChild(TreeNode* childToRemove) {
         }
         //try merging with right
         else if (rightSibling != nullptr && rightSibling->keys.size() == kInnerOrder) {
-            if(this->keys.size() > 0){
-                if (distance > 0) {
-                    unsigned long deletePos = distance - 1;
-                    this->keys.erase(this->keys.begin() + deletePos);
-                }
-                else {
-                    this->keys.erase(this->keys.begin());
-                }
-            }
             this->merger();
         }
         //try merging with left
         else if (leftSibling != nullptr && leftSibling->keys.size() == kInnerOrder) {
-            if(this->keys.size() > 0){
-                if (distance > 0) {
-                    unsigned long deletePos = distance - 1;
-                    this->keys.erase(this->keys.begin() + deletePos);
-                }
-                else {
-                    this->keys.erase(this->keys.begin());
-                }
-            }
             leftSibling->merger();
-        }
-    }
-    else {
-        if (distance > 0) {
-            unsigned long deletePos = distance - 1;
-            this->keys.erase(this->keys.begin() + deletePos);
-        }
-        else {
-            this->keys.erase(this->keys.begin());
         }
     }
 }
