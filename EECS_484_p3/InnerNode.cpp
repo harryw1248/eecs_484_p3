@@ -370,6 +370,13 @@ void InnerNode::deleteChild(TreeNode* childToRemove) {
         }
         //try merging with right
         else if (rightSibling != nullptr && rightSibling->keys.size() == kLeafOrder) {
+            if (distance > 0) {
+                unsigned long deletePos = distance - 1;
+                this->keys.erase(this->keys.begin() + deletePos);
+            }
+            else {
+                this->keys.erase(this->keys.begin());
+            }
             this->merger();
         }
         //try merging with left
@@ -401,62 +408,49 @@ Key InnerNode::getKey() {
 void InnerNode::merger() {
     
     auto sibling = this->getSibling(this, 'R');
-    
-    auto front = sibling->children.front();
-    auto getKey = sibling->getKey();
-    
-    this->insertChild(front, getKey);
-    
-    
-    auto begin = sibling->children.begin();
-    
-    sibling->children.erase(begin);
-    
-    unsigned int zero = 0;
-    while (zero < sibling->children.size()) {
-        auto front = sibling->children.front();
-        auto keys = sibling->keys.front();
+    for(unsigned long i = 0; i < kLeafOrder+1; ++i){
         
-        this->insertChild(front, keys);
+        //transfer child
+        this->children.push_back(sibling->children[0]);
+        sibling->children[0]->updateParent(this);
+        sibling->children.erase(sibling->children.begin());
         
-        auto begin = sibling->children.begin();
-        sibling->children.erase(begin);
-        auto keysbegin = sibling->keys.begin();
-        sibling->keys.erase(keysbegin);
+        //pull key from parent
+        this->keys.push_back(sibling->getKey());
         
-        
-    }
-    
-    sibling->getParent()->deleteChild(sibling);
-    
-    //tree shortening case
-    if(this->getParent()->keys.size() < kLeafOrder){
-        for(unsigned long i = 0; i < this->children.size(); ++i){
-            //pull key from parent
-            this->keys.push_back(sibling->getKey());
-            
-            //find this position in parent
-            unsigned long posInParent = 0;
-            for(unsigned long i = 0; i < this->getParent()->children.size(); ++i){
-                if(this->getParent()->children[i] == sibling){
-                    posInParent = i;
-                }
-            }
-            unsigned long keyInParentPos = posInParent - 1;
-            //update parent's key
-            this->getParent()->keys[keyInParentPos] = sibling->keys[0];
-            sibling->keys.erase(keys.begin());
-            
-            //push child over
-            this->children.push_back(sibling->children[0]);
-            sibling->children[0]->updateParent(this);
-            
-            sibling->children.erase(sibling->children.begin());
-            
-            //check if key of this has to be updated
-            if(this->children[this->keys.size()-1]->minKey() < this->keys[keys.size()-1] ){
-                this->keys[keys.size()-1] = this->children[keys.size()]->minKey();
+        //find this position in parent
+        unsigned long posInParent = 0;
+        for(unsigned long i = 0; i < this->getParent()->children.size(); ++i){
+            if(this->getParent()->children[i] == this){
+                posInParent = i;
             }
         }
+        
+        unsigned long keyInParentPos = 0;
+        if(posInParent == 0){
+            keyInParentPos = 0;
+        }
+        else{
+            keyInParentPos = posInParent - 1;
+        }
+        
+        //update parent's key
+        if(sibling->keys.size() != 0){
+            this->getParent()->keys[keyInParentPos] = sibling->keys[0];
+            sibling->keys.erase(sibling->keys.begin());
+        }
+        else{
+            this->getParent()->children.pop_back();
+            return;
+        }
+        
+        //check if key of this has to be updated
+        if(this->children[this->keys.size()-1]->minKey() < this->keys[keys.size()-1] ){
+        }
+        else{
+            this->keys[keys.size()-1] = this->children[keys.size()]->minKey();
+        }
     }
+    delete sibling;
+
 }

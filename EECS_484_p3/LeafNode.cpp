@@ -178,7 +178,8 @@ void LeafNode::insertEntry(const DataEntry& newEntry) {
     
     
 }
-
+//PROBLEM!!!!!!!!! check piazza post 1110 for failed test case
+//must update common ancestor during merge from a non-sibling
 void LeafNode::deleteEntry(const DataEntry& entryToRemove) {
     // TO DO: implement this function
     
@@ -252,7 +253,6 @@ void LeafNode::deleteEntry(const DataEntry& entryToRemove) {
                 this->rightNeighbor->rightNeighbor->leftNeighbor = this;
             }
             auto temp = this->rightNeighbor->rightNeighbor;
-            //this->getParent()->deleteChild(this->rightNeighbor);
             
             //if pulling from a non-sibling
             if(this->getCommonAncestor(this->rightNeighbor) != this->getParent()){
