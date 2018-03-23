@@ -102,6 +102,7 @@ vector<DataEntry> LeafNode::rangeFind(const Key& begin, const Key& end) const {
                 return vec;
             }
         }
+        leaf = leaf->rightNeighbor;
     }
     return vec;
 }
@@ -207,7 +208,6 @@ void LeafNode::deleteEntry(const DataEntry& entryToRemove) {
                 }
                 this->getCommonAncestor(this->rightNeighbor)->updateKey(position,this->rightNeighbor->minKey());
             }
-            
             this->getParent()->updateKey(this->rightNeighbor,this->rightNeighbor->minKey());
         }
         //check if we can borrow from left
@@ -228,11 +228,7 @@ void LeafNode::deleteEntry(const DataEntry& entryToRemove) {
                 this->leftNeighbor->entries.pop_back();
             }
             
-            if(this->getParent() != nullptr){
-                this->getParent()->updateKey(this,this->minKey());
-            }
-            
-            //update common ancestor
+            //update common ancestor if borrowed from non-sibling
             if(this->getCommonAncestor(this->leftNeighbor) != this->getParent()){
                 TreeNode* position = nullptr;
                 for(unsigned long i = 0; i < this->getCommonAncestor(this->leftNeighbor)->getChildren().size(); ++i){
@@ -244,7 +240,6 @@ void LeafNode::deleteEntry(const DataEntry& entryToRemove) {
             }
             this->getParent()->updateKey(this,this->minKey());
         }
-        //NEED to reset neighbors during merging
         //merge with right
         else if(this->rightNeighbor != nullptr && this->rightNeighbor->entries.size() == kLeafOrder){
             for(unsigned int i = 0; i < kLeafOrder; ++i){
@@ -268,8 +263,6 @@ void LeafNode::deleteEntry(const DataEntry& entryToRemove) {
                 this->getParent()->deleteChild(this->rightNeighbor);
             }
             this->rightNeighbor = temp;
-            
-            
         }
         //merge with left and then delete this
         else{
