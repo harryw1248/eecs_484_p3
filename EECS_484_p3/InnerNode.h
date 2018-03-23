@@ -5,7 +5,7 @@
 #include "TreeNode.h"                                           // for TreeNode (base class)
 #include "Utilities.h"                                          // for size constants
 #include <iosfwd>                                               // for ostream forward declaration
-#include "LeafNode.h"
+//#include "LeafNode.h"
 
 class InnerNode final : public TreeNode {
 public:
@@ -126,7 +126,7 @@ public:
     InnerNode* getSibling(InnerNode* innerNodeIn, char direction);
     
     Key findRightKey(InnerNode* innerNodeIn);
-    Key findRightKey(LeafNode* leafNodeIn);
+    //Key findRightKey(LeafNode* leafNodeIn);
 
     
     //find the key to pull down into innernode after redistribution

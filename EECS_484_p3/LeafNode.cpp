@@ -245,7 +245,7 @@ void LeafNode::deleteEntry(const DataEntry& entryToRemove) {
             //if pulling from a non-sibling
             if(this->getCommonAncestor(this->rightNeighbor) != this->getParent()){
                 InnerNode* commonAncestor = this->getCommonAncestor(this->rightNeighbor);
-                Key updateKey = this->rightNeighbor->rightNeighbor->TreeNode::minKey();
+                Key updateKey = this->rightNeighbor->rightNeighbor->minKey();
                 commonAncestor->updateKey(this->rightNeighbor->rightNeighbor,updateKey);
             }
             //if pulling from a sibling

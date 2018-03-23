@@ -88,11 +88,11 @@ Key InnerNode::findPullDownKey(InnerNode* innerNodeIn) {
     return parent->keys[distance];
 }
 
-Key InnerNode::findRightKey(LeafNode* leafNodeIn) {
-    auto i = find(this->children.begin(), this->children.end(), leafNodeIn);
-    unsigned long distance = std::distance(this->children.begin(), i);
-    return this->keys[distance - 1];
-}
+//Key InnerNode::findRightKey(LeafNode* leafNodeIn) {
+//    auto i = find(this->children.begin(), this->children.end(), leafNodeIn);
+//    unsigned long distance = std::distance(this->children.begin(), i);
+//    return this->keys[distance - 1];
+//}
 
 // deallocate all children
 InnerNode::~InnerNode() {
