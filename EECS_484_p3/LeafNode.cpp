@@ -199,21 +199,9 @@ void LeafNode::deleteEntry(const DataEntry& entryToRemove) {
                 this->rightNeighbor->entries.erase(this->rightNeighbor->entries.begin());
             }
             
-            //update common ancestor if borrowed from non-sibling
-            if(this->getCommonAncestor(this->rightNeighbor) != this->getParent()){
-                TreeNode* position = nullptr;
-                InnerNode* commonAncestor = this->getCommonAncestor(this->rightNeighbor);
-                Key updateKey = 0;
-                
-                for(unsigned long i = 0; i < commonAncestor->getChildren().size(); ++i){
-                    if(commonAncestor->getChildren()[i]->contains(this->rightNeighbor)){
-                        position = commonAncestor->getChildren()[i];
-                        updateKey = commonAncestor->getChildren()[i]->minKey();
-                    }
-                }
-                commonAncestor->updateKey(position,updateKey);
-            }
-            this->getParent()->updateKey(this->rightNeighbor,this->rightNeighbor->minKey());
+            //update common ancestor
+            InnerNode* commonAncestor = this->getCommonAncestor(this->rightNeighbor);
+            commonAncestor->updateKey(this->rightNeighbor,this->rightNeighbor->minKey());
         }
         //check if we can borrow from left
         else if(this->leftNeighbor != nullptr && this->leftNeighbor->entries.size() > kLeafOrder){
@@ -233,21 +221,9 @@ void LeafNode::deleteEntry(const DataEntry& entryToRemove) {
                 this->leftNeighbor->entries.pop_back();
             }
             
-            //update common ancestor if borrowed from non-sibling
-            if(this->getCommonAncestor(this->leftNeighbor) != this->getParent()){
-                TreeNode* position = nullptr;
-                InnerNode* commonAncestor = this->getCommonAncestor(this->leftNeighbor);
-                Key updateKey = 0;
-
-                for(unsigned long i = 0; i < commonAncestor->getChildren().size(); ++i){
-                    if(commonAncestor->getChildren()[i]->contains(this)){
-                        position = commonAncestor->getChildren()[i];
-                        updateKey = commonAncestor->getChildren()[i]->minKey();
-                    }
-                }
-                commonAncestor->updateKey(position,updateKey);
-            }
-            this->getParent()->updateKey(this,this->minKey());
+            //update common ancestor
+            InnerNode* commonAncestor = this->getCommonAncestor(this->leftNeighbor);
+            commonAncestor->updateKey(this,this->minKey());
         }
         //merge with right
         else if(this->rightNeighbor != nullptr && this->rightNeighbor->entries.size() == kLeafOrder){
