@@ -314,6 +314,10 @@ void InnerNode::deleteChild(TreeNode* childToRemove) {
                 //pull down key of parent into this
                 Key pulledDownKey = findPullDownKey(this);
                 this->updateKey(this->children[kLeafOrder + i], pulledDownKey);
+                //check if pulled down key needs to be updated
+                if(this->children[kLeafOrder + i-1]->minKey() < this->keys[kLeafOrder + i-1]){
+                    this->updateKey(this->children[kLeafOrder + i], this->children[kLeafOrder + i]->minKey());
+                }
                 
                 //push right sibling's key into parent
                 Key pushedUpKey = rightSibling->keys[0];
@@ -347,6 +351,10 @@ void InnerNode::deleteChild(TreeNode* childToRemove) {
                 //pull down key of parent into this
                 Key pulledDownKey = findPullDownKey(leftSibling);
                 this->updateKey(this->children[i + 1], pulledDownKey); //bug
+                //check if pulled down key needs to be updated
+                if(this->children[kLeafOrder + i-1]->minKey() < this->keys[kLeafOrder + i-1]){
+                    this->updateKey(this->children[kLeafOrder + i], this->children[kLeafOrder + i]->minKey());
+                }
                 
                 //push left sibling's key into parent
                 Key pushedUpKey = leftSibling->keys[leftSibling->keys.size() - 1];
@@ -387,12 +395,14 @@ Key InnerNode::getKey() {
 }
 
 void InnerNode::merger() {
+    
     auto sibling = this->getSibling(this, 'R');
     
     auto front = sibling->children.front();
     auto getKey = sibling->getKey();
     
     this->insertChild(front, getKey);
+    
     
     auto begin = sibling->children.begin();
     
@@ -402,17 +412,21 @@ void InnerNode::merger() {
     while (zero < sibling->children.size()) {
         auto front = sibling->children.front();
         auto keys = sibling->keys.front();
+        
         this->insertChild(front, keys);
+        
         auto begin = sibling->children.begin();
         sibling->children.erase(begin);
         auto keysbegin = sibling->keys.begin();
         sibling->keys.erase(keysbegin);
+        
+        
     }
     
     sibling->getParent()->deleteChild(sibling);
     
     //tree shortening case
-    if(this->keys.size() < kLeafOrder){
+    if(this->getParent()->keys.size() < kLeafOrder){
         for(unsigned long i = 0; i < this->children.size(); ++i){
             //pull key from parent
             this->keys.push_back(sibling->getKey());
@@ -432,6 +446,7 @@ void InnerNode::merger() {
             //push child over
             this->children.push_back(sibling->children[0]);
             sibling->children[0]->updateParent(this);
+            
             sibling->children.erase(sibling->children.begin());
             
             //check if key of this has to be updated

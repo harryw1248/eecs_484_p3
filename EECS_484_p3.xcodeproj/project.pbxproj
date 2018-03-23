@@ -30,6 +30,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		083585F02064ACB20072E54E /* tester.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = tester.py; sourceTree = "<group>"; };
 		0837441B20577AF900CD2BD9 /* submit.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = submit.sh; sourceTree = "<group>"; };
 		0870C4832059ABD600642731 /* test1_insert.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test1_insert.txt; sourceTree = "<group>"; };
 		08C3F7BD205089BF00A233DC /* EECS_484_p3 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = EECS_484_p3; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -87,6 +88,7 @@
 				08C3F7C9205089F600A233DC /* DataEntry.cpp */,
 				08C3F7CA205089F600A233DC /* DataEntry.h */,
 				08C3F7CB205089F600A233DC /* InnerNode.cpp */,
+				083585F02064ACB20072E54E /* tester.py */,
 				08C3F7CC205089F600A233DC /* InnerNode.h */,
 				08C3F7CD205089F600A233DC /* LeafNode.cpp */,
 				08C3F7CE205089F600A233DC /* LeafNode.h */,
