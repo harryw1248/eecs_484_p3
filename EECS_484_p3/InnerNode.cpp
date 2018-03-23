@@ -424,6 +424,12 @@ void InnerNode::merger() {
         
         //pull key from parent
         this->keys.push_back(sibling->getKey());
+        //check if key of this has to be updated
+        if(this->children[this->keys.size()-1]->minKey() < this->keys[keys.size()-1] ){
+        }
+        else{
+            this->keys[keys.size()-1] = this->children[keys.size()]->minKey();
+        }
         
         //find this position in parent
         unsigned long posInParent = 0;
@@ -447,12 +453,6 @@ void InnerNode::merger() {
             return;
         }
         
-        //check if key of this has to be updated
-        if(this->children[this->keys.size()-1]->minKey() < this->keys[keys.size()-1] ){
-        }
-        else{
-            this->keys[keys.size()-1] = this->children[keys.size()]->minKey();
-        }
     }
     delete sibling;
 
