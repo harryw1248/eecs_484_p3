@@ -370,23 +370,27 @@ void InnerNode::deleteChild(TreeNode* childToRemove) {
         }
         //try merging with right
         else if (rightSibling != nullptr && rightSibling->keys.size() == kLeafOrder) {
-            if (distance > 0) {
-                unsigned long deletePos = distance - 1;
-                this->keys.erase(this->keys.begin() + deletePos);
-            }
-            else {
-                this->keys.erase(this->keys.begin());
+            if(this->keys.size() > 0){
+                if (distance > 0) {
+                    unsigned long deletePos = distance - 1;
+                    this->keys.erase(this->keys.begin() + deletePos);
+                }
+                else {
+                    this->keys.erase(this->keys.begin());
+                }
             }
             this->merger();
         }
         //try merging with left
         else if (leftSibling != nullptr && leftSibling->keys.size() == kLeafOrder) {
-            if (distance > 0) {
-                unsigned long deletePos = distance - 1;
-                this->keys.erase(this->keys.begin() + deletePos);
-            }
-            else {
-                this->keys.erase(this->keys.begin());
+            if(this->keys.size() > 0){
+                if (distance > 0) {
+                    unsigned long deletePos = distance - 1;
+                    this->keys.erase(this->keys.begin() + deletePos);
+                }
+                else {
+                    this->keys.erase(this->keys.begin());
+                }
             }
             leftSibling->merger();
         }
@@ -447,9 +451,20 @@ void InnerNode::merger() {
             sibling->keys.erase(sibling->keys.begin());
         }
         else{
-            delete sibling;
+            //auto newParent = this->getParent()->getParent();
             this->getParent()->keys.erase(this->getParent()->keys.begin()+keyInParentPos);
-            this->getParent()->children.erase(this->getParent()->children.begin()+keyInParentPos+1);
+            if(this->getParent() != nullptr){
+                this->getParent()->deleteChild(sibling);
+            }
+            else{
+                delete sibling;
+            }
+            //this->getParent()->keys.erase(this->getParent()->keys.begin()+keyInParentPos);
+            //this->getParent()->children.erase(this->getParent()->children.begin()+keyInParentPos+1);
+//            if(this->getParent() !=nullptr && this->getParent()->keys.size() < kLeafOrder){
+//                this->getParent()->merger();
+//            }
+            //this->updateParent(newParent);
             return;
         }
         
