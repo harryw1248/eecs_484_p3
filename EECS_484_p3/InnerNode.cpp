@@ -426,13 +426,7 @@ void InnerNode::merger() {
             }
         }
         
-        unsigned long keyInParentPos = 0;
-        if(posInParent == 0){
-            keyInParentPos = 0;
-        }
-        else{
-            keyInParentPos = posInParent - 1;
-        }
+        unsigned long keyInParentPos = posInParent;
         
         //update parent's key
         if(sibling->keys.size() != 0){
@@ -440,7 +434,8 @@ void InnerNode::merger() {
             sibling->keys.erase(sibling->keys.begin());
         }
         else{
-            this->getParent()->children.pop_back();
+            delete sibling;
+            this->getParent()->children.erase(this->getParent()->children.begin()+keyInParentPos+1);
             return;
         }
         
