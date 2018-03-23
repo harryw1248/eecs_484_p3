@@ -381,6 +381,13 @@ void InnerNode::deleteChild(TreeNode* childToRemove) {
         }
         //try merging with left
         else if (leftSibling != nullptr && leftSibling->keys.size() == kLeafOrder) {
+            if (distance > 0) {
+                unsigned long deletePos = distance - 1;
+                this->keys.erase(this->keys.begin() + deletePos);
+            }
+            else {
+                this->keys.erase(this->keys.begin());
+            }
             leftSibling->merger();
         }
     }
@@ -435,6 +442,7 @@ void InnerNode::merger() {
         }
         else{
             delete sibling;
+            this->getParent()->keys.erase(this->getParent()->keys.begin()+keyInParentPos);
             this->getParent()->children.erase(this->getParent()->children.begin()+keyInParentPos+1);
             return;
         }
