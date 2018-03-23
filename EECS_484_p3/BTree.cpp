@@ -17,7 +17,7 @@ BTree::BTree()
 
 // destructor
 BTree::~BTree() {
-    delete root;
+    //delete root;
 }
 
 // return height

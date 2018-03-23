@@ -121,7 +121,9 @@ void LeafNode::insertEntry(const DataEntry& newEntry) {
     // TO DO: implement this function
     
     //check if entry is already in the tree
-    assert(!this->contains(Key(newEntry)));
+    if(this->contains(Key(newEntry))){
+        return;
+    }
     
     //case where leaf node is full
     if(entries.size() >= 2*kLeafOrder){
@@ -183,7 +185,9 @@ void LeafNode::insertEntry(const DataEntry& newEntry) {
 void LeafNode::deleteEntry(const DataEntry& entryToRemove) {
     // TO DO: implement this function
     
-    assert(this->contains(entryToRemove));
+    if(!this->contains(entryToRemove)){
+        return;
+    }
     
     auto i = std::lower_bound(this->entries.begin(),this->entries.end(),entryToRemove);
     entries.erase(i);
@@ -240,23 +244,10 @@ void LeafNode::deleteEntry(const DataEntry& entryToRemove) {
             
             //if pulling from a non-sibling
             if(this->getCommonAncestor(this->rightNeighbor) != this->getParent()){
-                TreeNode* position = nullptr;
                 InnerNode* commonAncestor = this->getCommonAncestor(this->rightNeighbor);
-                Key updateKey = 0;
-                
-                for(unsigned long i = 0; i < commonAncestor->getChildren().size(); ++i){
-                    if(commonAncestor->getChildren()[i]->contains(this->rightNeighbor)){
-                        position = commonAncestor->getChildren()[i];
-                        updateKey = commonAncestor->getChildren()[i]->minKey();
-                    }
-                }
-                this->rightNeighbor->getParent()->deleteChild(this->rightNeighbor);
-                updateKey = position->minKey();
-
-                commonAncestor->updateKey(position,updateKey);
-                //this->rightNeighbor->getParent()->deleteChild(this->rightNeighbor);
+                Key updateKey = this->rightNeighbor->rightNeighbor->TreeNode::minKey();
+                commonAncestor->updateKey(this->rightNeighbor->rightNeighbor,updateKey);
             }
-            
             //if pulling from a sibling
             else{
                 this->getParent()->deleteChild(this->rightNeighbor);

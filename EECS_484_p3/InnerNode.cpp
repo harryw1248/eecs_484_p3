@@ -71,7 +71,7 @@ InnerNode* InnerNode::getSibling(InnerNode* innerNodeIn, char direction) {
 
 Key InnerNode::findRightKey(InnerNode* innerNodeIn) {
     InnerNode* parent = innerNodeIn->getParent();
-    assert(parent != nullptr);
+    //assert(parent != nullptr);
     auto i = find(parent->children.begin(), parent->children.end(), innerNodeIn);
     unsigned long distance = std::distance(parent->children.begin(), i);
     if (distance == 0) {
@@ -82,7 +82,7 @@ Key InnerNode::findRightKey(InnerNode* innerNodeIn) {
 
 Key InnerNode::findPullDownKey(InnerNode* innerNodeIn) {
     InnerNode* parent = innerNodeIn->getParent();
-    assert(parent != nullptr);
+    //assert(parent != nullptr);
     auto i = find(parent->children.begin(), parent->children.end(), innerNodeIn);
     unsigned long distance = std::distance(parent->children.begin(), i);
     return parent->keys[distance];
@@ -195,22 +195,26 @@ TreeNode* InnerNode::deleteFromRoot(const DataEntry& entryToRemove) {
 void InnerNode::insertEntry(const DataEntry& newEntry) {
     // TO DO: implement this function
     //keep tracing down using inner node keys
-    assert(!contains(newEntry));
+    if(contains(newEntry)){
+        return;
+    }
     for (unsigned i = 0; i < keys.size(); ++i) {
         if (newEntry < keys[i]) {
             this->children[i]->insertEntry(newEntry);
-            assert((keys.size() <= 2 * kInnerOrder && (!getParent() || (keys.size() >= kInnerOrder))) || !getParent());
+            //assert((keys.size() <= 2 * kInnerOrder && (!getParent() || (keys.size() >= kInnerOrder))) || !getParent());
             return;
         }
     }
     children.back()->insertEntry(newEntry);
-    assert((keys.size() <= 2 * kInnerOrder && (!getParent() || (keys.size() >= kInnerOrder))) || !getParent());
+    //assert((keys.size() <= 2 * kInnerOrder && (!getParent() || (keys.size() >= kInnerOrder))) || !getParent());
 }
 
 void InnerNode::deleteEntry(const DataEntry& entryToRemove) {
     // TO DO: implement this function
     
-    assert(contains(entryToRemove));
+    if(!contains(entryToRemove)){
+        return;
+    }
     
     Key getRemovalKey = Key(entryToRemove);
     
@@ -224,7 +228,7 @@ void InnerNode::deleteEntry(const DataEntry& entryToRemove) {
 
 void InnerNode::insertChild(TreeNode* newChild, const Key& key) {
     // TO DO: implement this function
-    assert((newChild != nullptr) && newChild->minKey() >= key);
+    //assert((newChild != nullptr) && newChild->minKey() >= key);
     
     //update key in inner node (look at lecture slides)
     auto upper_bound = std::upper_bound(keys.begin(), keys.end(), key);
