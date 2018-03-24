@@ -268,7 +268,7 @@ void LeafNode::deleteEntry(const DataEntry& entryToRemove) {
                     }
                 }
                 commonAncestor->updateKey(position,updateKey);
-                this->getParent()->getSibling(this->getParent(),'R')->deleteChild(this->rightNeighbor);
+                this->rightNeighbor->getParent()->deleteChild(this->rightNeighbor);
             }
             else{
                 this->getParent()->deleteChild(this->rightNeighbor);
